@@ -33,9 +33,9 @@
 		// seconds part from the timestamp
 		var seconds = date.getSeconds();
 
-        element.innerHTML = 'Latitude: '           + position.coords.latitude              + '<br />' +
-                            'Longitude: '          + position.coords.longitude             + '<br />' +
-                            'Aika: '          	   + hours + ':' + minutes + ':' + seconds + '<br />';
+        element.innerHTML = '<span class="highlight">Latitude:</span> '           + position.coords.latitude              + '<br />' +
+                            '<span class="highlight">Longitude:</span> '          + position.coords.longitude             + '<br />' +
+                            '<span class="highlight">Aika:</span> '          	   + hours + ':' + minutes + ':' + seconds + '<br />';
     }
 
     // onError Callback receives a PositionError object
@@ -52,7 +52,7 @@
 
  	<div data-role="page" id="home">
  		<div data-role="header">
- 			<h1>Aarrejahti</h1>
+ 			<h1>Aarrejahti Jyväskylä</h1>
  		</div>
  		<div data-role="content">
  			<h3>Aarrejahdin etusivu</h3>
