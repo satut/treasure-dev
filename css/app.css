@@ -10,6 +10,7 @@
 	background-image: -webkit-linear-gradient(top left, #C562A1 0%, #FFC5EA 100%);
 	background-image: linear-gradient(to bottom right, #C562A1 0%, #FFC5EA 100%);
 	color: #612B4D;
+	text-shadow: none;
  }
  .ui-page {
    -webkit-animation-fill-mode: both;
@@ -17,4 +18,5 @@
  .highlight {
  	color: #F012AC;
  	font-weight: bold;
+ 	text-shadow: none;
  }
