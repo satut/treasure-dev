@@ -24,9 +24,17 @@
     //
     function onSuccess(position) {
         var element = document.getElementById('geolocation');
+        var date = new Date(position.timestamp*1000);
+		// hours part from the timestamp
+		var hours = date.getHours();
+		// minutes part from the timestamp
+		var minutes = date.getMinutes();
+		// seconds part from the timestamp
+		var seconds = date.getSeconds();
+
         element.innerHTML = 'Latitude: '           + position.coords.latitude              + '<br />' +
                             'Longitude: '          + position.coords.longitude             + '<br />' +
-                            'Aika: '          + position.timestamp                    + '<br />';
+                            'Aika: '          	   + hours + ':' + minutes + ':' + seconds + '<br />';
     }
 
     // onError Callback receives a PositionError object
