@@ -25,17 +25,12 @@
     //
     function onSuccess(position) {
         var element = document.getElementById('geolocation');
-        var date = new Date(position.timestamp*1000);
-		// hours part from the timestamp
-		var hours = date.getHours();
-		// minutes part from the timestamp
-		var minutes = date.getMinutes();
-		// seconds part from the timestamp
-		var seconds = date.getSeconds();
+        var displat = document.getElementById('latval');
+        var displon = document.getElementById('lonval');
 
-        element.innerHTML = '<span id="latval" class="highlight">Latitude:</span> ' + position.coords.latitude + '<br />' +
-                            '<span id="lonval" class="highlight">Longitude:</span> ' + position.coords.longitude + '<br />' +
-                            '<span class="highlight">Aika:</span> ' + hours + ':' + minutes + ':' + seconds + '<br />';
+        element.innerHTML = 'Paikannettu!';
+        displat.innerHTML = position.coords.latitude;
+        displon.innerHTML = position.coords.longitude;
     }
 
     // onError Callback receives a PositionError object
@@ -44,16 +39,6 @@
         alert('Errorkoodi: '    + error.code    + '\n' +
               'Virheviesti: ' + error.message + '\n');
     }
-
-    var btn = document.getElementById('checkLocation');
-	btn.onclick = function(){
-		var userLat = document.getElementById('latval').value;
-		var userLon = document.getElementById('lonval').value;
-		if ( (userLat == 62.2437494) && (userLon == 25.7644926) ) {
-			document.getElementById('checkedlocation');.innerHTML = 'YAYYYY!!!';
-		}
-		else document.getElementById('checkedlocation');.innerHTML = 'Etsiskelehän vielä.';
-	}
     </script>
 
 
@@ -66,14 +51,36 @@
  		</div>
  		<div data-role="content">
  			<p id="geolocation">Etsitään sijaintia...</p>
- 			<a href="#" id="checkLocation" data-role="button">Tarkista sijainti</a>
- 			<p id="checkedlocation">...</p>
+ 			<span class="highlight">Latitude:</span> <span id="latval">?</span>
+ 			<br>
+ 			<span class="highlight">Longitude:</span> <span id="lonval">?</span>
+ 			<br>
+ 			<button id="checkLocation">Tarkista sijainti</button>
+ 			<p id="checkedLocation">...</p>
  		</div>
  		<div data-role="footer" data-position="fixed">
  			<h1>&copy; Satu Tyrväinen 2013</h1>
  		</div>
  	</div>
 
+
+ <script type="text/javascript">
+ window.onload = function(){
+    var btn = document.getElementById('checkLocation');
+	btn.onclick = function(){
+		var userLat = parseFloat(document.getElementById('latval').innerHTML);
+		var userLon = parseFloat(document.getElementById('lonval').innerHTML);
+		console.log(userLat);
+		console.log(userLon);
+		if ( (userLat == 62.2437494) && (userLon == 25.7644926) ) {
+			document.getElementById('checkedLocation').innerHTML = 'YAYYYY!!!';
+		}
+		else {
+			document.getElementById('checkedLocation').innerHTML = 'Etsiskelehän vielä.';
+		}
+	}
+}
+</script>
 
  </body>
 </html>
