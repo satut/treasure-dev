@@ -20,3 +20,11 @@
  	font-weight: bold;
  	text-shadow: none;
  }
+ .ui-header .ui-title, .ui-footer .ui-title {
+	text-align: center;
+	margin: .6em auto .8em;
+	padding: 0;
+	text-overflow: ellipsis;
+	overflow: auto;
+	white-space: nowrap;
+}
