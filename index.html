@@ -66,13 +66,17 @@
 
  <script type="text/javascript">
  window.onload = function(){
+ 	var treasureLat = 62.2437494;
+ 	var treasureLon = 25.7644926;
+
     var btn = document.getElementById('checkLocation');
 	btn.onclick = function(){
 		var userLat = parseFloat(document.getElementById('latval').innerHTML);
 		var userLon = parseFloat(document.getElementById('lonval').innerHTML);
 		console.log(userLat);
 		console.log(userLon);
-		if ( (userLat == 62.2437494) && (userLon == 25.7644926) ) {
+		if ( ( (treasureLat - userLat <= 0.009 ) || (treasureLat - userLat >= -0.009) ) &&
+			( (treasureLon - userLon <= 0.009 ) || (treasureLon - userLon >= -0.009) ) ) {
 			document.getElementById('checkedLocation').innerHTML = 'YAYYYY!!!';
 		}
 		else {
