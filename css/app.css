@@ -28,3 +28,7 @@
 	overflow: auto;
 	white-space: nowrap;
 }
+#geolocation, #checkedLocation {
+	text-align: center;
+	width: 100%;
+}

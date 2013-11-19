@@ -58,16 +58,25 @@
  			<h1>Aarrejahti Jyväskylä</h1>
  		</div>
  		<div data-role="content">
- 			<p id="geolocation">Etsitään sijaintia...</p>
- 			<span class="highlight">Latitude:</span> <span id="latval">?</span>
- 			<br>
- 			<span class="highlight">Longitude:</span> <span id="lonval">?</span>
+
+            <p id="geolocation">Etsitään sijaintia...</p>
+
+            <div class="ui-grid-a">
+                <div class="ui-block-a"><span class="highlight">Latitude:</span></div>
+                <div class="ui-block-b"><span id="latval">?</span></div>
+            </div>
+
+            <div class="ui-grid-a">
+                <div class="ui-block-a"><span class="highlight">Longitude:</span></div>
+                <div class="ui-block-b"><span id="lonval">?</span></div>
+            </div>
+
  			<br>
             <br>
             <button id="relocate">Paikanna</button>
             <br>
  			<button id="checkLocation">Löydä aarre!</button>
- 			<p id="checkedLocation">...</p>
+ 			<p id="checkedLocation"></p>
  		</div>
  		<div data-role="footer" data-position="fixed">
  			<h1>&copy; Satu Tyrväinen 2013</h1>
@@ -88,16 +97,16 @@
 		var userLon = parseFloat(document.getElementById('lonval').innerHTML);
 		console.log(userLat);
 		console.log(userLon);
-		if ( ( (treasureLat - userLat <= 0.009 ) && (treasureLat - userLat >= -0.009) ) &&
-			( (treasureLon - userLon <= 0.009 ) && (treasureLon - userLon >= -0.009) ) ) {
+		if ( ( (treasureLat - userLat <= 0.0009 ) && (treasureLat - userLat >= -0.0000) ) &&
+			( (treasureLon - userLon <= 0.0009 ) && (treasureLon - userLon >= -0.0009) ) ) {
 			document.getElementById('checkedLocation').innerHTML = 'Olet aivan aarteen lähellä!';
 		}
-        else if ( ( (treasureLat - userLat <= 0.09 ) && (treasureLat - userLat >= -0.09) ) &&
-            ( (treasureLon - userLon <= 0.09 ) && (treasureLon - userLon >= -0.09) ) ) {
+        else if ( ( (treasureLat - userLat <= 0.002 ) && (treasureLat - userLat >= -0.002) ) &&
+            ( (treasureLon - userLon <= 0.002 ) && (treasureLon - userLon >= -0.002) ) ) {
             document.getElementById('checkedLocation').innerHTML = 'Alkaa jo polttaa.';
         }
-        else if ( ( (treasureLat - userLat <= 0.9 ) && (treasureLat - userLat >= -0.9) ) &&
-            ( (treasureLon - userLon <= 0.9 ) && (treasureLon - userLon >= -0.9) ) ) {
+        else if ( ( (treasureLat - userLat <= 0.005 ) && (treasureLat - userLat >= -0.005) ) &&
+            ( (treasureLon - userLon <= 0.005 ) && (treasureLon - userLon >= -0.005) ) ) {
             document.getElementById('checkedLocation').innerHTML = 'Lämpenee...';
         }
 		else {
