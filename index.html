@@ -12,6 +12,10 @@
  	<link rel="stylesheet" href="css/app.css" type="text/css">
 
  <script type="text/javascript" charset="utf-8">
+    // Aarteen sijainti (Veturitallinkatu 5 as. 626, 40100 Jyväskylä)
+    var treasureLat = 62.2427795;
+    var treasureLon = 25.7592863;
+
     // Wait for device API libraries to load
     //
     document.addEventListener("deviceready", onDeviceReady, false);
@@ -38,6 +42,26 @@
         element.innerHTML = 'Paikannettu!';
         displat.innerHTML = position.coords.latitude;
         displon.innerHTML = position.coords.longitude;
+
+
+        // Tarkistetaan onko käyttäjä aarteen lähellä
+        var userLat = position.coords.latitude;
+        var userLon = position.coords.longitude;
+        if ( ( (treasureLat - userLat <= 0.0009 ) && (treasureLat - userLat >= -0.0000) ) &&
+            ( (treasureLon - userLon <= 0.0009 ) && (treasureLon - userLon >= -0.0009) ) ) {
+                document.getElementById('checkedLocation').innerHTML = 'Olet aivan aarteen lähellä!';
+        }
+        else if ( ( (treasureLat - userLat <= 0.002 ) && (treasureLat - userLat >= -0.002) ) &&
+            ( (treasureLon - userLon <= 0.002 ) && (treasureLon - userLon >= -0.002) ) ) {
+                document.getElementById('checkedLocation').innerHTML = 'Alkaa jo polttaa.';
+        }
+         else if ( ( (treasureLat - userLat <= 0.005 ) && (treasureLat - userLat >= -0.005) ) &&
+            ( (treasureLon - userLon <= 0.005 ) && (treasureLon - userLon >= -0.005) ) ) {
+                document.getElementById('checkedLocation').innerHTML = 'Lämpenee...';
+        }
+        else {
+            document.getElementById('checkedLocation').innerHTML = 'Etsiskelehän vielä.';
+        }
     }
 
     // onError Callback receives a PositionError object
@@ -73,10 +97,11 @@
 
  			<br>
             <br>
-            <button id="relocate">Paikanna</button>
-            <br>
- 			<button id="checkLocation">Löydä aarre!</button>
  			<p id="checkedLocation"></p>
+            <br>
+            <br>
+            <button id="relocate">Tarkista sijainti</button>
+            
  		</div>
  		<div data-role="footer" data-position="fixed">
  			<h1>&copy; Satu Tyrväinen 2013</h1>
@@ -86,6 +111,7 @@
 
  <script type="text/javascript">
  window.onload = function(){
+    /*
     // 62.2427925
  	var treasureLat = 62.2427795;
     // 25.7591883
@@ -113,7 +139,7 @@
 			document.getElementById('checkedLocation').innerHTML = 'Etsiskelehän vielä.';
 		}
 	}
-
+    */
 
     var relocateBtn = document.getElementById('relocate');
     relocateBtn.onclick = function(){
