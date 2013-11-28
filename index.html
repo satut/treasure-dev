@@ -12,9 +12,20 @@
  	<link rel="stylesheet" href="css/app.css" type="text/css">
 
  <script type="text/javascript" charset="utf-8">
+
     // Aarteen sijainti (Veturitallinkatu 5 as. 626, 40100 Jyväskylä)
-    var treasureLat = 62.2427795;
-    var treasureLon = 25.7592863;
+    var treasureLat = 62.2433; //62.2432626  &&  62.2435172 tarpeeksi lähekkäin
+    var treasureLon = 25.7579;  // 25.7580648  &&  25.7577094 tarpeeksi lähekkäin
+
+
+    //62.2432
+    //62.2435
+
+    //25.7580
+    //25.7577
+
+
+    var watchID = null;
 
     // Wait for device API libraries to load
     //
@@ -28,8 +39,10 @@
     // Funktio, joka paikallistaa käyttäjän longtituden ja latituden avulla.
     function findLocation() {
         document.getElementById('geolocation').innerHTML = 'Etsitään sijaintia...';
-        var options = {maximumAge: 0, timeout: 10000, enableHighAccuracy:true};
-        navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
+
+        // Throw an error if no update is received every second
+        var options = {maximumAge: 0, timeout: 1000, enableHighAccuracy:true};
+        watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
     }
 
     // onSuccess Geolocation
@@ -47,9 +60,9 @@
         // Tarkistetaan onko käyttäjä aarteen lähellä
         var userLat = position.coords.latitude;
         var userLon = position.coords.longitude;
-        if ( ( (treasureLat - userLat <= 0.0009 ) && (treasureLat - userLat >= -0.0000) ) &&
+        if ( ( (treasureLat - userLat <= 0.0009 ) && (treasureLat - userLat >= -0.0009) ) &&
             ( (treasureLon - userLon <= 0.0009 ) && (treasureLon - userLon >= -0.0009) ) ) {
-                document.getElementById('checkedLocation').innerHTML = 'Olet aivan aarteen lähellä!';
+                document.getElementById('checkedLocation').innerHTML = 'Olet lähellä aarretta!';
         }
         else if ( ( (treasureLat - userLat <= 0.002 ) && (treasureLat - userLat >= -0.002) ) &&
             ( (treasureLon - userLon <= 0.002 ) && (treasureLon - userLon >= -0.002) ) ) {
@@ -67,8 +80,8 @@
     // onError Callback receives a PositionError object
     //
     function onError(error) {
-        alert('Errorkoodi: '    + error.code    + '\n' +
-              'Virheviesti: ' + error.message + '\n');
+        alert('Tapahtui virhe.' + '\n' + 'Koodi: '    + error.code    + '\n' +
+              'Viesti: ' + error.message + '\n');
     }
 
     </script>
