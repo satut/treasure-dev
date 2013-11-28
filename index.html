@@ -63,6 +63,8 @@
         if ( ( (treasureLat - userLat <= 0.0009 ) && (treasureLat - userLat >= -0.0009) ) &&
             ( (treasureLon - userLon <= 0.0009 ) && (treasureLon - userLon >= -0.0009) ) ) {
                 document.getElementById('checkedLocation').innerHTML = 'Olet lähellä aarretta!';
+                showAlert();
+                navigator.geolocation.clearWatch(watchID);
         }
         else if ( ( (treasureLat - userLat <= 0.002 ) && (treasureLat - userLat >= -0.002) ) &&
             ( (treasureLon - userLon <= 0.002 ) && (treasureLon - userLon >= -0.002) ) ) {
@@ -82,6 +84,15 @@
     function onError(error) {
         alert('Tapahtui virhe.' + '\n' + 'Koodi: '    + error.code    + '\n' +
               'Viesti: ' + error.message + '\n');
+    }
+
+    // Jos käyttäjä on aarteen lähellä, näytetään notifikaatio
+    function showAlert() {
+        navigator.notification.alert(
+            'Olet aivan aarteen lähellä!',  // message
+            'Polttaa polttaa!',            // title
+            'OK'                  // buttonName
+        );
     }
 
     </script>
