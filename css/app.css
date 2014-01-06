@@ -4,10 +4,6 @@
  {
 	text-shadow: none;
  }
- .ui-page {
-   -webkit-animation-fill-mode: both;
-   -webkit-backface-visibility: hidden;
- }
  .highlight {
  	color: #A80169;
  	font-weight: bold;
