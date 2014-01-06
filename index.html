@@ -3,13 +3,14 @@
  <head>
  	<meta charset="UTF-8" />
  	<meta name="viewport" content="width=device-width, initial-scale=1">
- 	<title>Aarrejahti Jyväskylä</title>
+ 	<title>Aarrejahti</title>
  	<link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css" type="text/css">
  	<script type="text/javascript" src="js/jquery.js"></script>
  	<script type="text/javascript" src="js/app.js"></script>
  	<script type="text/javascript" src="js/jquery.mobile-1.3.1.min.js"></script>
  	<script type="text/javascript" src="cordova.js"></script>
  	<link rel="stylesheet" href="css/app.css" type="text/css">
+    <link rel="stylesheet" href="css/treasure-hunt-pink.css" type="text/css">
 
  <script type="text/javascript" charset="utf-8">
 
@@ -40,8 +41,8 @@
     function findLocation() {
         document.getElementById('geolocation').innerHTML = 'Etsitään sijaintia...';
 
-        // Throw an error if no update is received every second
-        var options = {maximumAge: 0, timeout: 1000, enableHighAccuracy:true};
+        // Throw an error if no update is received every 2 seconds
+        var options = {maximumAge: 0, timeout: 2000, enableHighAccuracy:true};
         watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
     }
 
@@ -63,7 +64,7 @@
         if ( ( (treasureLat - userLat <= 0.0009 ) && (treasureLat - userLat >= -0.0009) ) &&
             ( (treasureLon - userLon <= 0.0009 ) && (treasureLon - userLon >= -0.0009) ) ) {
                 document.getElementById('checkedLocation').innerHTML = 'Olet lähellä aarretta!';
-                showAlert();
+                //showAlert();
                 navigator.geolocation.clearWatch(watchID);
         }
         else if ( ( (treasureLat - userLat <= 0.002 ) && (treasureLat - userLat >= -0.002) ) &&
@@ -101,11 +102,111 @@
  </head>
  <body>
 
+    <!-- ****** ETUSIVU ****** -->
  	<div data-role="page" id="home">
  		<div data-role="header">
- 			<h1>Aarrejahti Jyväskylä</h1>
+ 			<h1>Aarrejahti</h1>
  		</div>
- 		<div data-role="content">
+ 		<div data-role="content" class="content">
+            <div class="logo-holder centerme">
+                <img src="images/logo.png">
+            </div>
+            <h2>Tervetuloa Aarrejahtiin!</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce molestie blandit tellus. Vivamus cursus, lorem ut pellentesque bibendum, est elit pharetra tellus, lacinia tempus neque arcu eget urna. Aenean sed quam eget ipsum hendrerit molestie. Aliquam tempor diam at elementum fermentum.</p>
+
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#campaigns" data-transition="slide">Kampanjat</a></li>
+                <li><a href="#termsofuse" data-transition="slide">Käyttöehdot</a></li>
+                <li><a href="#info" data-transition="slide">Tietoa</a></li>
+            </ul>
+            
+ 		</div>
+ 		<div data-role="footer" data-position="fixed">
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <a href="#home" data-role="button" data-icon="home" data-iconpos="notext" data-iconshadow="false" data-theme="a" data-inline="true" data-transition="slide">Home</a>
+                </div>
+                <div class="ui-block-b">
+                    <a href="#" data-role="button" data-icon="back" data-iconpos="notext" data-iconshadow="false" data-theme="a" data-inline="true" data-transition="slide">Back</a>
+                </div>
+            </div>
+ 		</div>
+ 	</div>
+
+
+    <!-- **** KAMPANJAT **** -->
+    <div data-role="page" id="campaigns">
+        <div data-role="header">
+            <h1>Aarrejahti</h1>
+        </div>
+        <div data-role="content" class="content">
+
+            <h2>Käynnissä olevat kampanjat</h2>
+            <p>
+                Valitse aarrejahti, johon haluat osallistua
+            </p>
+
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#campaign01" data-transition="slide">Kampanja 1</a></li>
+                <li><a href="#" data-transition="slide">Kampanja 2</a></li>
+            </ul>
+            
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <a href="#home" data-role="button" data-icon="home" data-iconpos="notext" data-iconshadow="false" data-theme="a" data-inline="true" data-transition="slide">Home</a>
+                </div>
+                <div class="ui-block-b">
+                    <a href="#" data-role="button" data-rel="back" data-icon="back" data-iconpos="notext" data-iconshadow="false" data-theme="a" data-inline="true" data-transition="slide">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- ** YKSITTÄINEN KAMPANJA ** -->
+    <div data-role="page" id="campaign01">
+        <div data-role="header">
+            <h1>Aarrejahti</h1>
+        </div>
+        <div data-role="content" class="content">
+
+            <h2>Kampanjan nimi</h2>
+            <p>
+                Lyhyt kuvaus itse kampanjasta, palkinnoista, osallistumisajasta jne... Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce molestie blandit tellus. Vivamus cursus, lorem ut pellentesque bibendum, est elit pharetra tellus, lacinia tempus neque arcu eget urna. Aenean sed quam eget ipsum hendrerit molestie.
+            </p>
+
+            <h2>Aarrejahdit</h2>
+
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#" data-transition="slide">Mennyt aarrejahti</a></li>
+                <li><a href="#campaign01treasure01" data-transition="slide">Käynnissä oleva aarrejahti</a></li>
+            </ul>
+            
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <a href="#home" data-role="button" data-icon="home" data-iconpos="notext" data-iconshadow="false" data-theme="a" data-inline="true" data-transition="slide">Home</a>
+                </div>
+                <div class="ui-block-b">
+                    <a href="#" data-role="button" data-rel="back" data-icon="back" data-iconpos="notext" data-iconshadow="false" data-theme="a" data-inline="true" data-transition="slide">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ** YKSITTÄISEN KAMPANJAN KÄYNNISSÄ OLEVA AARREJAHTI ** -->
+    <div data-role="page" id="campaign01treasure01">
+        <div data-role="header">
+            <h1>Aarrejahti</h1>
+        </div>
+        <div data-role="content" class="content">
 
             <p id="geolocation">Etsitään sijaintia...</p>
 
@@ -119,18 +220,92 @@
                 <div class="ui-block-b"><span id="lonval">?</span></div>
             </div>
 
- 			<br>
             <br>
- 			<p id="checkedLocation"></p>
+            <br>
+            <p id="checkedLocation"></p>
             <br>
             <br>
             <button id="relocate">Tarkista sijainti</button>
             
- 		</div>
- 		<div data-role="footer" data-position="fixed">
- 			<h1>&copy; Satu Tyrväinen 2013</h1>
- 		</div>
- 	</div>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <a href="#home" data-role="button" data-icon="home" data-iconpos="notext" data-iconshadow="false" data-theme="a" data-inline="true" data-transition="slide">Home</a>
+                </div>
+                <div class="ui-block-b">
+                    <a href="#" data-role="button" data-rel="back" data-icon="back" data-iconpos="notext" data-iconshadow="false" data-theme="a" data-inline="true" data-transition="slide">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- **** KÄYTTÖEHDOT **** -->
+    <div data-role="page" id="termsofuse">
+        <div data-role="header">
+            <h1>Aarrejahti</h1>
+        </div>
+        <div data-role="content" class="content">
+
+            <h2>Käyttöehdot</h2>
+
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse hendrerit, metus nec facilisis venenatis, nunc mauris scelerisque justo, in sodales massa nibh vel mauris. Nam sit amet libero at nulla rutrum porta. Etiam semper non sapien eu sollicitudin. Suspendisse a vehicula neque. In purus purus, accumsan ac magna non, mattis dictum est.
+            </p>
+            <p>
+                Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur tristique massa felis, at congue quam vehicula sit amet. Phasellus molestie, felis id ultricies auctor, risus est scelerisque arcu, sit amet ornare odio felis eget tellus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In fermentum, massa non auctor lacinia, felis elit posuere libero, vitae varius erat tellus tempus mi. Morbi at lectus at neque convallis tristique.
+            </p>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse hendrerit, metus nec facilisis venenatis, nunc mauris scelerisque justo, in sodales massa nibh vel mauris. Nam sit amet libero at nulla rutrum porta. Etiam semper non sapien eu sollicitudin. Suspendisse a vehicula neque. In purus purus, accumsan ac magna non, mattis dictum est.
+            </p>
+            <p>
+                Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur tristique massa felis, at congue quam vehicula sit amet. Phasellus molestie, felis id ultricies auctor, risus est scelerisque arcu, sit amet ornare odio felis eget tellus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In fermentum, massa non auctor lacinia, felis elit posuere libero, vitae varius erat tellus tempus mi. Morbi at lectus at neque convallis tristique.
+            </p>
+            
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <a href="#home" data-role="button" data-icon="home" data-iconpos="notext" data-iconshadow="false" data-theme="a" data-inline="true" data-transition="slide">Home</a>
+                </div>
+                <div class="ui-block-b">
+                    <a href="#" data-role="button" data-rel="back" data-icon="back" data-iconpos="notext" data-iconshadow="false" data-theme="a" data-inline="true" data-transition="slide">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- **** TIETOJA **** -->
+    <div data-role="page" id="info">
+        <div data-role="header">
+            <h1>Aarrejahti</h1>
+        </div>
+        <div data-role="content" class="content">
+
+            <h2>Tietoja</h2>    
+
+            <p>
+                Tänne tulisi jotain pientä informaatiota itse sovelluksesta. Esim. tekijä(t) jne... Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse hendrerit, metus nec facilisis venenatis, nunc mauris scelerisque justo, in sodales massa nibh vel mauris. Nam sit amet libero at nulla rutrum porta. Etiam semper non sapien eu sollicitudin.
+            </p>
+            <p>
+                Suspendisse a vehicula neque. In purus purus, accumsan ac magna non, mattis dictum est. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur tristique massa felis, at congue quam vehicula sit amet.
+            </p>
+            
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <a href="#home" data-role="button" data-icon="home" data-iconpos="notext" data-iconshadow="false" data-theme="a" data-inline="true" data-transition="slide">Home</a>
+                </div>
+                <div class="ui-block-b">
+                    <a href="#" data-role="button" data-rel="back" data-icon="back" data-iconpos="notext" data-iconshadow="false" data-theme="a" data-inline="true" data-transition="slide">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
  <script type="text/javascript">

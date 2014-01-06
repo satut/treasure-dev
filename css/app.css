@@ -2,10 +2,6 @@
 
  body,.ui-page
  {
- 	background: #FFC5EA;
- 	background-image: url('../images/background.jpg');
- 	background-size: cover;
-	color: #612B4D;
 	text-shadow: none;
  }
  .ui-page {
@@ -24,7 +20,14 @@
 	overflow: auto;
 	white-space: nowrap;
 }
+.ui-footer {
+	text-align: center;
+}
 #geolocation, #checkedLocation {
 	text-align: center;
 	width: 100%;
+}
+.centerme {
+	text-align: center;
+	margin: 0 auto;
 }
