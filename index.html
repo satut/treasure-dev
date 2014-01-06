@@ -42,7 +42,7 @@
         document.getElementById('geolocation').innerHTML = 'Etsitään sijaintia...';
 
         // Throw an error if no update is received every 2 seconds
-        var options = {maximumAge: 0, timeout: 2000, enableHighAccuracy:true};
+        var options = {maximumAge: 0, timeout: 9000, enableHighAccuracy:true};
         watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
     }
 
