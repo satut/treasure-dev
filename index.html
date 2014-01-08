@@ -27,6 +27,7 @@
 
 
     var watchID = null;
+    var treasureDistance;
 
     // Wait for device API libraries to load
     //
@@ -34,26 +35,35 @@
     // device APIs are available
     //
     function onDeviceReady() {
-    	findLocation();
+    	findFirstLocation();
     }
 
-    // Funktio, joka paikallistaa käyttäjän longtituden ja latituden avulla.
+    // Funktio, joka paikallistaa käyttäjän longtituden ja latituden avulla sovelluksen käynnistyessä.
+    function findFirstLocation() {
+
+        // Throw an error if no update is received every 10 seconds
+        var options = {maximumAge: 0, timeout: 10000, enableHighAccuracy:true};
+        navigator.geolocation.getCurrentPosition(onFirstSuccess, onError, options);
+    }
+
+
+    // Funktio, joka tarkkaillee käyttäjän sijaintia ja päivittää käyttäjän sijainnin longituden ja latituden tarvittaessa
     function findLocation() {
         document.getElementById('geolocation').innerHTML = 'Etsitään sijaintia...';
 
         // Throw an error if no update is received every 2 seconds
-        var options = {maximumAge: 0, timeout: 9000, enableHighAccuracy:true};
+        var options = {maximumAge: 0, timeout: 2000, enableHighAccuracy:true};
         watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
     }
 
-    // onSuccess Geolocation
+
+    // onFirstSuccess Geolocation
     //
-    function onSuccess(position) {
+    function onFirstSuccess(position) {
         var element = document.getElementById('geolocation');
         var displat = document.getElementById('latval');
         var displon = document.getElementById('lonval');
 
-        element.innerHTML = 'Paikannettu!';
         displat.innerHTML = position.coords.latitude;
         displon.innerHTML = position.coords.longitude;
 
@@ -61,24 +71,87 @@
         // Tarkistetaan onko käyttäjä aarteen lähellä
         var userLat = position.coords.latitude;
         var userLon = position.coords.longitude;
+
+        // The first calculated distance to the treasure from user's current location [(treasure long + lat) - (current long + lat)]
+        treasureDistance = ( (treasureLat + treasureLon) - (userLat + userLon) ) * (-1);
+        console.log(treasureDistance + " current: "  + currentTreasureDistance);
+
+
         if ( ( (treasureLat - userLat <= 0.0009 ) && (treasureLat - userLat >= -0.0009) ) &&
             ( (treasureLon - userLon <= 0.0009 ) && (treasureLon - userLon >= -0.0009) ) ) {
-                document.getElementById('checkedLocation').innerHTML = 'Olet lähellä aarretta!';
+                element.innerHTML = 'Olet lähellä aarretta!';
                 //showAlert();
-                navigator.geolocation.clearWatch(watchID);
+                //navigator.geolocation.clearWatch(watchID);
         }
         else if ( ( (treasureLat - userLat <= 0.002 ) && (treasureLat - userLat >= -0.002) ) &&
             ( (treasureLon - userLon <= 0.002 ) && (treasureLon - userLon >= -0.002) ) ) {
-                document.getElementById('checkedLocation').innerHTML = 'Alkaa jo polttaa.';
+                element.innerHTML = 'Olet melko lähellä aarretta';
         }
          else if ( ( (treasureLat - userLat <= 0.005 ) && (treasureLat - userLat >= -0.005) ) &&
             ( (treasureLon - userLon <= 0.005 ) && (treasureLon - userLon >= -0.005) ) ) {
-                document.getElementById('checkedLocation').innerHTML = 'Lämpenee...';
+                element.innerHTML = 'Olet vielä melko kaukana aarteesta';
         }
         else {
-            document.getElementById('checkedLocation').innerHTML = 'Etsiskelehän vielä.';
+            element.innerHTML = 'Et ole lähellä aarretta, etsiskelehän vielä';
         }
     }
+
+
+    // onSuccess Geolocation
+    //
+    function onSuccess(position) {
+        var element = document.getElementById('geolocation');
+        var coldWarm = document.getElementById('checkedLocation');
+        var displat = document.getElementById('latval');
+        var displon = document.getElementById('lonval');
+
+        displat.innerHTML = position.coords.latitude;
+        displon.innerHTML = position.coords.longitude;
+
+
+        // The user's current Lat and Long
+        var userLat = position.coords.latitude;
+        var userLon = position.coords.longitude;
+
+        // The current distance to the treasure from user's current location [(treasure long + lat) - (current long + lat)]
+        var currentTreasureDistance = ( (treasureLat + treasureLon) - (userLat + userLon) ) * (-1);
+
+        console.log(treasureDistance + " current: "  + currentTreasureDistance);
+
+        if ( ( (treasureLat - userLat <= 0.0009 ) && (treasureLat - userLat >= -0.0009) ) &&
+            ( (treasureLon - userLon <= 0.0009 ) && (treasureLon - userLon >= -0.0009) ) ) {
+                element.innerHTML = 'Olet lähellä aarretta!';
+                //showAlert();
+                //navigator.geolocation.clearWatch(watchID);
+        }
+        else if ( ( (treasureLat - userLat <= 0.002 ) && (treasureLat - userLat >= -0.002) ) &&
+            ( (treasureLon - userLon <= 0.002 ) && (treasureLon - userLon >= -0.002) ) ) {
+                element.innerHTML = 'Olet melko lähellä aarretta';
+        }
+         else if ( ( (treasureLat - userLat <= 0.005 ) && (treasureLat - userLat >= -0.005) ) &&
+            ( (treasureLon - userLon <= 0.005 ) && (treasureLon - userLon >= -0.005) ) ) {
+                element.innerHTML = 'Olet vielä melko kaukana aarteesta';
+        }
+        else {
+            element.innerHTML = 'Et ole lähellä aarretta, etsiskelehän vielä';
+        }
+
+
+        if ( (treasureDistance >= currentTreasureDistance) && ( (currentTreasureDistance <= 0.0009) ) ) {
+            coldWarm.innerHTML = 'Polttaa';
+        }        
+        else if (treasureDistance >= currentTreasureDistance) {
+            coldWarm.innerHTML = 'Lämpenee';
+        }
+        else if (treasureDistance < currentTreasureDistance) {
+            coldWarm.innerHTML = 'Kylmenee';
+        }
+
+        treasureDistance = currentTreasureDistance;
+
+    }
+
+
 
     // onError Callback receives a PositionError object
     //
@@ -117,7 +190,7 @@
             <ul data-role="listview" data-inset="true">
                 <li><a href="#campaigns" data-transition="slide">Kampanjat</a></li>
                 <li><a href="#termsofuse" data-transition="slide">Käyttöehdot</a></li>
-                <li><a href="#info" data-transition="slide">Tietoa</a></li>
+                <li><a href="#info" data-transition="slide">Tietoja</a></li>
             </ul>
             
  		</div>
@@ -183,8 +256,10 @@
             <h2>Aarrejahdit</h2>
 
             <ul data-role="listview" data-inset="true">
-                <li><a href="#" data-transition="slide">Mennyt aarrejahti</a></li>
-                <li><a href="#campaign01treasure01" data-transition="slide">Käynnissä oleva aarrejahti</a></li>
+                <li data-role="list-divider" data-theme="a">Käynnissä</li>
+                <li><a href="#campaign01treasure01" data-transition="slide">Käynnissä oleva aarrejahti 07.01.2014</a></li>
+                <li data-role="list-divider" data-theme="a">Menneet</li>
+                <li><a href="#" data-transition="slide">Mennyt aarrejahti 01.01.2014</a></li>
             </ul>
             
         </div>
@@ -208,7 +283,15 @@
         </div>
         <div data-role="content" class="content">
 
+            <script type="text/javascript" charset="utf-8">
+                findLocation();
+            </script>
+
             <p id="geolocation">Etsitään sijaintia...</p>
+
+            <div class="hint-image centerme">
+                <img src="images/vihjekuva.jpg">
+            </div>
 
             <div class="ui-grid-a">
                 <div class="ui-block-a"><span class="highlight">Latitude:</span></div>
@@ -222,7 +305,7 @@
 
             <br>
             <br>
-            <p id="checkedLocation"></p>
+            <p id="checkedLocation"> </p>
             <br>
             <br>
             <button id="relocate">Tarkista sijainti</button>

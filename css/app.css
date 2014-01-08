@@ -27,4 +27,10 @@
 .centerme {
 	text-align: center;
 	margin: 0 auto;
+	max-width: 100%;
+}
+h2 {
+	color: #FF25A5;
+	text-align: center;
+	font-size: 2em;
 }
