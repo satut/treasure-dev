@@ -12,22 +12,14 @@
  	<link rel="stylesheet" href="css/app.css" type="text/css">
     <link rel="stylesheet" href="css/treasure-hunt-pink.css" type="text/css">
 
- <script type="text/javascript" charset="utf-8">
+    <script type="text/javascript">
 
     // Aarteen sijainti (Veturitallinkatu 5 as. 626, 40100 Jyväskylä)
-    var treasureLat = 62.2433; //62.2432626  &&  62.2435172 tarpeeksi lähekkäin
-    var treasureLon = 25.7579;  // 25.7580648  &&  25.7577094 tarpeeksi lähekkäin
+    treasureLat = 0; //62.2432626  &&  62.2435172 tarpeeksi lähekkäin
+    treasureLon = 0;  // 25.7580648  &&  25.7577094 tarpeeksi lähekkäin
 
-
-    //62.2432
-    //62.2435
-
-    //25.7580
-    //25.7577
-
-
-    var watchID = null;
-    var treasureDistance;
+    watchID = null;
+    treasureDistance = 999;
 
     // Wait for device API libraries to load
     //
@@ -35,88 +27,54 @@
     // device APIs are available
     //
     function onDeviceReady() {
-    	findFirstLocation();
+        $( document ).delegate(".treasurehunt", "pageinit", function() {
+            findLocation();   
+        });
+
     }
-
-    // Funktio, joka paikallistaa käyttäjän longtituden ja latituden avulla sovelluksen käynnistyessä.
-    function findFirstLocation() {
-
-        // Throw an error if no update is received every 10 seconds
-        var options = {maximumAge: 0, timeout: 10000, enableHighAccuracy:true};
-        navigator.geolocation.getCurrentPosition(onFirstSuccess, onError, options);
-    }
-
 
     // Funktio, joka tarkkaillee käyttäjän sijaintia ja päivittää käyttäjän sijainnin longituden ja latituden tarvittaessa
     function findLocation() {
-        document.getElementById('geolocation').innerHTML = 'Etsitään sijaintia...';
+        //document.getElementById('geolocation').innerHTML = 'Etsitään sijaintia...';
 
-        // Throw an error if no update is received every 2 seconds
-        var options = {maximumAge: 0, timeout: 2000, enableHighAccuracy:true};
+        // Throw an error if no update is received every 5 seconds
+        var options = {maximumAge: 0, timeout: 5000, enableHighAccuracy:true};
         watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
     }
 
 
-    // onFirstSuccess Geolocation
-    //
-    function onFirstSuccess(position) {
-        var element = document.getElementById('geolocation');
-        var displat = document.getElementById('latval');
-        var displon = document.getElementById('lonval');
-
-        displat.innerHTML = position.coords.latitude;
-        displon.innerHTML = position.coords.longitude;
-
-
-        // Tarkistetaan onko käyttäjä aarteen lähellä
-        var userLat = position.coords.latitude;
-        var userLon = position.coords.longitude;
-
-        // The first calculated distance to the treasure from user's current location [(treasure long + lat) - (current long + lat)]
-        treasureDistance = ( (treasureLat + treasureLon) - (userLat + userLon) ) * (-1);
-        console.log(treasureDistance + " current: "  + currentTreasureDistance);
-
-
-        if ( ( (treasureLat - userLat <= 0.0009 ) && (treasureLat - userLat >= -0.0009) ) &&
-            ( (treasureLon - userLon <= 0.0009 ) && (treasureLon - userLon >= -0.0009) ) ) {
-                element.innerHTML = 'Olet lähellä aarretta!';
-                //showAlert();
-                //navigator.geolocation.clearWatch(watchID);
-        }
-        else if ( ( (treasureLat - userLat <= 0.002 ) && (treasureLat - userLat >= -0.002) ) &&
-            ( (treasureLon - userLon <= 0.002 ) && (treasureLon - userLon >= -0.002) ) ) {
-                element.innerHTML = 'Olet melko lähellä aarretta';
-        }
-         else if ( ( (treasureLat - userLat <= 0.005 ) && (treasureLat - userLat >= -0.005) ) &&
-            ( (treasureLon - userLon <= 0.005 ) && (treasureLon - userLon >= -0.005) ) ) {
-                element.innerHTML = 'Olet vielä melko kaukana aarteesta';
-        }
-        else {
-            element.innerHTML = 'Et ole lähellä aarretta, etsiskelehän vielä';
-        }
-    }
-
 
     // onSuccess Geolocation
-    //
     function onSuccess(position) {
-        var element = document.getElementById('geolocation');
-        var coldWarm = document.getElementById('checkedLocation');
-        var displat = document.getElementById('latval');
-        var displon = document.getElementById('lonval');
-
-        displat.innerHTML = position.coords.latitude;
-        displon.innerHTML = position.coords.longitude;
-
+        var currentHuntID = $.mobile.activePage.attr("id");
+        treasureLat = parseInt($('input#'+currentHuntID+'lat').val());
+        treasureLon = parseInt($('input#'+currentHuntID+'lon').val());    
+        var element = document.getElementById(currentHuntID+'geolocation');
+        var coldWarm = document.getElementById(currentHuntID+'checkedLocation');
+        var displat = document.getElementById(currentHuntID+'latval');
+        var displon = document.getElementById(currentHuntID+'lonval');
+        var currentTreasureDistance = 999;
 
         // The user's current Lat and Long
         var userLat = position.coords.latitude;
         var userLon = position.coords.longitude;
 
-        // The current distance to the treasure from user's current location [(treasure long + lat) - (current long + lat)]
-        var currentTreasureDistance = ( (treasureLat + treasureLon) - (userLat + userLon) ) * (-1);
+        displat.innerHTML = userLat;
+        displon.innerHTML = userLon;
 
-        console.log(treasureDistance + " current: "  + currentTreasureDistance);
+        currentTreasureDistance = ( (treasureLat + treasureLon) - (userLat + userLon) );
+
+        // The current distance to the treasure from user's current location [(treasure long + lat) - (current long + lat)]
+        if ( currentTreasureDistance < 0 ) {
+            currentTreasureDistance = ( currentTreasureDistance * (-1) );
+        }
+        else {
+            currentTreasureDistance = currentTreasureDistance;
+        }
+
+        //console.log('treasureDistance: ' + treasureDistance + ' currentTreasureDistance: ' + currentTreasureDistance);  
+        //console.log('treasureDistance - currentTreasureDistance : ' + (treasureDistance-currentTreasureDistance));  
+
 
         if ( ( (treasureLat - userLat <= 0.0009 ) && (treasureLat - userLat >= -0.0009) ) &&
             ( (treasureLon - userLon <= 0.0009 ) && (treasureLon - userLon >= -0.0009) ) ) {
@@ -128,7 +86,7 @@
             ( (treasureLon - userLon <= 0.002 ) && (treasureLon - userLon >= -0.002) ) ) {
                 element.innerHTML = 'Olet melko lähellä aarretta';
         }
-         else if ( ( (treasureLat - userLat <= 0.005 ) && (treasureLat - userLat >= -0.005) ) &&
+        else if ( ( (treasureLat - userLat <= 0.005 ) && (treasureLat - userLat >= -0.005) ) &&
             ( (treasureLon - userLon <= 0.005 ) && (treasureLon - userLon >= -0.005) ) ) {
                 element.innerHTML = 'Olet vielä melko kaukana aarteesta';
         }
@@ -137,14 +95,17 @@
         }
 
 
-        if ( (treasureDistance >= currentTreasureDistance) && ( (currentTreasureDistance <= 0.0009) ) ) {
+        if ( (treasureDistance >= currentTreasureDistance) && ( (currentTreasureDistance <= 0.0005) ) ) {
             coldWarm.innerHTML = 'Polttaa';
         }        
-        else if (treasureDistance >= currentTreasureDistance) {
+        else if (treasureDistance > currentTreasureDistance) {
             coldWarm.innerHTML = 'Lämpenee';
         }
         else if (treasureDistance < currentTreasureDistance) {
             coldWarm.innerHTML = 'Kylmenee';
+        }
+        else if (treasureDistance == currentTreasureDistance) {
+            coldWarm.innerHTML = 'Ei kylmene eikä lämpene';       
         }
 
         treasureDistance = currentTreasureDistance;
@@ -154,7 +115,6 @@
 
 
     // onError Callback receives a PositionError object
-    //
     function onError(error) {
         alert('Tapahtui virhe.' + '\n' + 'Koodi: '    + error.code    + '\n' +
               'Viesti: ' + error.message + '\n');
@@ -171,10 +131,9 @@
 
     </script>
 
-
  </head>
  <body>
-
+<div id="wrapper">
     <!-- ****** ETUSIVU ****** -->
  	<div data-role="page" id="home">
  		<div data-role="header">
@@ -219,10 +178,22 @@
                 Valitse aarrejahti, johon haluat osallistua
             </p>
 
-            <ul data-role="listview" data-inset="true">
-                <li><a href="#campaign01" data-transition="slide">Kampanja 1</a></li>
-                <li><a href="#" data-transition="slide">Kampanja 2</a></li>
+            <!-- JAVASCRIPT -->
+            <ul data-role="listview" data-inset="true" id="campaignList">
+            <script type="text/javascript">
+                // Parsing JSON data with jQuery
+                var output = "";
+                $.getJSON('campaigns.json',function(json){
+                    $.each(json.campaigns,function(i,campaigns){
+                        output += "<li><a href='#" + json.campaigns[i].campaignID + "'data-transition='slide'>"
+                        + json.campaigns[i].campaignName + "</a></li>";
+                    });
+                    var outputTarget = document.getElementById("campaignList");
+                    outputTarget.innerHTML=output;
+                });
+            </script>
             </ul>
+
             
         </div>
         <div data-role="footer" data-position="fixed">
@@ -239,9 +210,52 @@
 
 
 
+    <!-- ** LUODAAN KAMPANJA(T) ** -->
+    <script type="text/javascript">
+        // Parsing JSON data with jQuery
+        var campaignViewOutput = "";
+        $.getJSON('campaigns.json',function(json){
+            $.each(json.campaigns,function(i,campaigns){
+                campaignViewOutput += "<div data-role=" + "page" + " id=" + json.campaigns[i].campaignID + ">"
+                + "<div data-role="+"header"+">";
+                campaignViewOutput += "<h1>Aarrejahti</h1>";
+                campaignViewOutput += "</div>";
+
+                campaignViewOutput += "<div data-role='content' class='content'>";
+                campaignViewOutput += "<h2>" + json.campaigns[i].campaignName + "</h2>";
+                campaignViewOutput += "<p>" + json.campaigns[i].campaignDescription + "</p>";
+
+                campaignViewOutput += "<h2>Aarrejahdit</h2>";
+                campaignViewOutput += "<ul data-role='listview' data-inset='true'>";
+                $.each(campaigns.treasurehunts, function(j, treasurehunts) {
+                    campaignViewOutput += "<li><a href='#" + treasurehunts.treasurehuntID + "'data-transition='slide'>"
+                                        + treasurehunts.treasurehuntName + "</a></li>";
+                });
+                campaignViewOutput += "</ul>";
+
+                campaignViewOutput += "<div data-role='footer' data-position='fixed'>"+
+                                    "<div class='ui-grid-a'>"+
+                                    "<div class='ui-block-a'>"+
+                                    "<a href='#home' data-role='button' data-icon='home' data-iconpos='notext' data-theme='a' data-inline='true' data-transition='slide'>Home</a>"+
+                                    "</div>"+
+                                    "<div class='ui-block-b'>"+
+                                    "<a href='#' data-role='button' data-rel='back' data-icon='back' data-iconpos='notext' data-theme='a' data-inline='true' data-transition='slide'>Back</a>"+
+                                    "</div></div></div></div></div>";
+                });
+            
+            var newCampaign = $(campaignViewOutput);
+            newCampaign.appendTo($.mobile.pageContainer);
+
+            /*
+            var campaignsHolder = document.getElementById("wrapper");
+            campaignsHolder.innerHTML += campaignViewOutput;
+            */
+        });
+    </script>
 
 
-    <!-- ** YKSITTÄINEN KAMPANJA ** -->
+<!-- ** YKSITTÄINEN KAMPANJA (alkuperäinen koodi) ** -->
+<!--
     <div data-role="page" id="campaign01">
         <div data-role="header">
             <h1>Aarrejahti</h1>
@@ -274,18 +288,85 @@
             </div>
         </div>
     </div>
+-->
 
 
-    <!-- ** YKSITTÄISEN KAMPANJAN KÄYNNISSÄ OLEVA AARREJAHTI ** -->
-    <div data-role="page" id="campaign01treasure01">
+
+    <!-- ** LUODAAN KAMPANJAN AARREJAHTI ** -->
+
+    <script type="text/javascript">
+    // Parsing JSON data with jQuery
+    var treasurehuntViewOutput = "";
+
+    $.getJSON('campaigns.json',function(json){
+        $.each(json.campaigns,function(i,campaigns){
+            $.each(campaigns.treasurehunts, function(j, treasurehunts) {
+                treasurehuntViewOutput += "<div data-role=" + "page" + " id=" + treasurehunts.treasurehuntID + " class='treasurehunt " + treasurehunts.treasurehuntID + "'>"
+                + "<div data-role="+"header"+">";
+                treasurehuntViewOutput += "<h1>Aarrejahti</h1>";
+                treasurehuntViewOutput += "</div>";
+
+                treasurehuntViewOutput += "<div data-role='content' class='content'>";
+                treasurehuntViewOutput += "<p id='"+treasurehunts.treasurehuntID+"geolocation'>Etsitään sijaintia...</p>";
+                treasurehuntViewOutput += "<div class='hint-image centerme'>";
+                treasurehuntViewOutput += "<img src='" + treasurehunts.treasurehuntStep1 + "'></div>";
+
+                treasurehuntViewOutput += "<div class='ui-grid-a'>";
+                treasurehuntViewOutput += "<div class='ui-block-a'><span class='highlight'>Latitude:</span></div>";
+                treasurehuntViewOutput += "<div class='ui-block-b'><span id='"+treasurehunts.treasurehuntID+"latval'>?</span></div></div>";
+
+                treasurehuntViewOutput += "<div class='ui-grid-a'>";
+                treasurehuntViewOutput += "<div class='ui-block-a'><span class='highlight'>Longitude:</span></div>";
+                treasurehuntViewOutput += "<div class='ui-block-b'><span id='"+treasurehunts.treasurehuntID+"lonval'>?</span></div></div>"
+
+                treasurehuntViewOutput += "<br><br><p id='"+treasurehunts.treasurehuntID+"checkedLocation'></p>";
+                treasurehuntViewOutput += "<br><br><button id='relocate'>Tarkista sijainti</button></div>";
+
+                // Hidden inputs for treasurehunt spesific parameters such as longitude and latitude of the treasure and current hunts id
+                treasurehuntViewOutput += "<input type='hidden' name='huntID' id='huntID' value='" + treasurehunts.treasurehuntID + "'>";
+                treasurehuntViewOutput += "<input type='hidden' name='latitude' id='"+ treasurehunts.treasurehuntID + "lat' value='" + treasurehunts.treasurehuntLat + "'>";
+                treasurehuntViewOutput += "<input type='hidden' name='longitude' id='"+ treasurehunts.treasurehuntID + "lon' value='" + treasurehunts.treasurehuntLon + "'>";
+                /*
+                treasurehuntViewOutput += "treasureLat = " + treasurehunts.treasurehuntLat + ";";
+                treasurehuntViewOutput += "treasureLon = " + treasurehunts.treasurehuntLon + ";";
+                treasurehuntViewOutput += "var watchID = null;";
+                treasurehuntViewOutput += "var treasureDistance = 999;";
+                treasurehuntViewOutput += "document.addEventListener('deviceready', onDeviceReady, false);";
+                treasurehuntViewOutput += "function onDeviceReady() {";
+                treasurehuntViewOutput += "$( document ).delegate('#" + treasurehunts.treasurehuntID + "', 'pageinit', function() {";
+                treasurehuntViewOutput += "findLocation();});}";
+                treasurehuntViewOutput += humppasusi;
+                */
+
+
+                treasurehuntViewOutput += "<div data-role='footer' data-position='fixed'>"+
+                            "<div class='ui-grid-a'>"+
+                                "<div class='ui-block-a'>"+
+                                    "<a href='#home' data-role='button' data-icon='home' data-iconpos='notext' data-theme='a' data-inline='true' data-transition='slide'>Home</a>"+
+                                "</div>"+
+                                "<div class='ui-block-b'>"+
+                                    "<a href='#' data-role='button' data-rel='back' data-icon='back' data-iconpos='notext' data-theme='a' data-inline='true' data-transition='slide'>Back</a>"+
+                                "</div></div></div></div></div>";
+
+            });
+
+        });
+
+        var newTreasurehunt = $(treasurehuntViewOutput);
+        newTreasurehunt.appendTo($.mobile.pageContainer);
+
+    });
+    </script>
+
+
+
+    <!-- ** YKSITTÄISEN KAMPANJAN KÄYNNISSÄ OLEVA AARREJAHTI (alkuperäinen koodi) ** -->
+    <!--
+    <div data-role="page" id="campaign01treasurehunt01">
         <div data-role="header">
             <h1>Aarrejahti</h1>
         </div>
         <div data-role="content" class="content">
-
-            <script type="text/javascript" charset="utf-8">
-                findLocation();
-            </script>
 
             <p id="geolocation">Etsitään sijaintia...</p>
 
@@ -322,6 +403,7 @@
             </div>
         </div>
     </div>
+    -->
 
 
     <!-- **** KÄYTTÖEHDOT **** -->
@@ -392,7 +474,6 @@
 
 
  <script type="text/javascript">
- window.onload = function(){
     /*
     // 62.2427925
  	var treasureLat = 62.2427795;
@@ -421,15 +502,20 @@
 			document.getElementById('checkedLocation').innerHTML = 'Etsiskelehän vielä.';
 		}
 	}
+
     */
 
-    var relocateBtn = document.getElementById('relocate');
-    relocateBtn.onclick = function(){
+    $( document ).delegate("#campaign01treasurehunt01", "pagebeforecreate", function() {
         findLocation();
-    }
 
-}
+        var relocateBtn = document.getElementById('relocate');
+        relocateBtn.onclick = function(){
+            findLocation();
+        }
+
+    });
 </script>
 
- </body>
+</div>
+</body>
 </html>

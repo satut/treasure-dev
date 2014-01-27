@@ -1,0 +1,45 @@
+{
+   "campaigns":[
+      {
+         "campaignID":"campaign01",
+         "campaignName":"Kampanja1",
+         "campaignDescription":"Tässä lukee kampanjan kuvaus.",
+         "treasurehunts":[
+            {
+               "treasurehuntID":"campaign01treasurehunt01",
+               "treasurehuntName":"Veturitallinkatu 5",
+               "treasurehuntLat":"62.24407959759403",
+               "treasurehuntLon":"25.757184608451173",
+               "status":"Avoinna",
+               "treasurehuntStep1":"http://satutyrvainen.com/treasurehunt/images/vihje1.jpg",
+               "treasurehuntStep2":"http://satutyrvainen.com/treasurehunt/images/vihje2.jpg"
+            },
+            {
+               "treasurehuntID":"campaign01treasurehunt02",
+               "treasurehuntName":"Puistokatu 1",
+               "treasurehuntLat":"62.24428",
+               "treasurehuntLon":"25.75022",
+               "status":"Avoinna",
+               "treasurehuntStep1":"http://satutyrvainen.com/treasurehunt/images/vihje1.jpg",
+               "treasurehuntStep2":"http://satutyrvainen.com/treasurehunt/images/vihje2.jpg"
+            }
+         ]
+      },
+      {
+         "campaignID":"campaign02",
+         "campaignName":"Kampanja2",
+         "campaignDescription":"Tässä lukee kampanjan kuvaus.",
+         "treasurehunts":[
+            {
+               "treasurehuntID":"campaign02treasurehunt01",
+               "treasurehuntName":"Tapionkatu 4",
+               "treasurehuntLat":"62.24747",
+               "treasurehuntLon":"25.74394",
+               "status":"Avoinna",
+               "treasurehuntStep1":"http://satutyrvainen.com/treasurehunt/images/vihje1.jpg",
+               "treasurehuntStep2":"http://satutyrvainen.com/treasurehunt/images/vihje2.jpg"
+            }
+         ]
+      }
+   ]
+}
