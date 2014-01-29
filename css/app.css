@@ -32,7 +32,7 @@
 h2 {
 	color: #FF25A5;
 	text-align: center;
-	font-size: 2em;
+	font-size: 1.4em;
 }
 img {
 	border: 0;
@@ -43,4 +43,10 @@ img {
 }
 #tonextstep {
 	display: none;
+}
+.ui-input-text {
+	margin-bottom: 10px !important;
+}
+.ui-field-contain {
+	border: 0 !important;
 }
