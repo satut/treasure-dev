@@ -9,7 +9,7 @@
  	<script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript">
     $(document).on("mobileinit", function(){
-        $.mobile.defaultPageTransition = 'slide';
+        $.mobile.defaultPageTransition = 'flip';
     });
     </script>
  	<script type="text/javascript" src="js/jquery.mobile-1.4.0.min.js"></script>
@@ -39,13 +39,6 @@
             $('.relocate').click(function(){
                 findLocation();
             });
-            /*
-            function toNextStep(huntid) {
-                var currentHunt = huntid;
-                var nextStep = "#" + huntid + "step2";
-                changePage(nextStep, "slide", true, false);
-            }
-            */
         });
 
     }
@@ -71,6 +64,9 @@
         var displat = document.getElementById(currentHuntID+'latval');
         var displon = document.getElementById(currentHuntID+'lonval');
         var nextStepBtn = $('#'+currentHuntID).children('.content').children('#tonextstep');
+        var lastStepBtn = $('#'+currentHuntID).children('.content').children('#tolaststep');
+        var treasureCode = ($('input#'+currentHuntID+'code').val()).toLowerCase();
+        console.log("KOODI: " + treasureCode);
         var currentTreasureDistance = 999;
 
         // The user's current Lat and Long
@@ -98,6 +94,7 @@
         if ( ( (treasureLat - userLat <= 0.0009 ) && (treasureLat - userLat >= -0.0009) ) &&
             ( (treasureLon - userLon <= 0.0009 ) && (treasureLon - userLon >= -0.0009) ) ) {
                 element.innerHTML = 'Olet lähellä aarretta!';
+                lastStepBtn.css('display', 'block');
                 nextStepBtn.css('display', 'block');
                 //showAlert();
                 //navigator.geolocation.clearWatch(watchID);
@@ -116,7 +113,7 @@
         }
 
 
-        if ( (treasureDistance >= currentTreasureDistance) && ( (currentTreasureDistance <= 0.0005) ) ) {
+        if ( (treasureDistance >= currentTreasureDistance) && ( (currentTreasureDistance <= 0.0003) ) ) {
             coldWarm.innerHTML = 'Polttaa';
         }        
         else if (treasureDistance > currentTreasureDistance) {
@@ -130,6 +127,25 @@
         }
 
         treasureDistance = currentTreasureDistance;
+
+        var form = document.getElementById(currentHuntID+'form');
+        var submit = document.getElementById(currentHuntID+'submit');
+
+        $(form).on("submit",function(e) {
+            //disable the button so we can't resubmit while we wait
+            //$(submit,form).attr("disabled","disabled");
+
+            navigator.geolocation.clearWatch(watchID);
+
+            var code = ($("#code", this).val()).toLowerCase();
+
+            if (code == treasureCode) {
+                console.log("jee!");
+            }
+            else {
+                console.log("eieiei");
+            }
+        });
 
     }
 
@@ -206,7 +222,7 @@
                 var output = "";
                 $.getJSON(jsonURL,function(json){
                     $.each(json.campaigns,function(i,campaigns){
-                        output += "<li><a href='#" + json.campaigns[i].campaignID + "'data-transition='slide'>"
+                        output += "<li><a href='#" + json.campaigns[i].campaignID + "'>"
                         + json.campaigns[i].campaignName + "</a></li>";
                     });
                     var outputTarget = document.getElementById("campaignList");
@@ -249,8 +265,10 @@
                 campaignViewOutput += "<h2>Aarrejahdit</h2>";
                 campaignViewOutput += "<ul data-role='listview' data-inset='true'>";
                 $.each(campaigns.treasurehunts, function(j, treasurehunts) {
-                    campaignViewOutput += "<li><a href='#" + treasurehunts.treasurehuntID + "'data-transition='slide'>"
-                                        + treasurehunts.treasurehuntName + "</a></li>";
+                    if ( parseInt(treasurehunts.treasurehuntStatus) == 0) {
+                        campaignViewOutput += "<li><a href='#" + treasurehunts.treasurehuntID + "'>"
+                                            + treasurehunts.treasurehuntName + "</a></li>";
+                    }
                 });
                 campaignViewOutput += "</ul>";
 
@@ -322,53 +340,57 @@
     $.getJSON(jsonURL,function(json){
         $.each(json.campaigns,function(i,campaigns){
             $.each(campaigns.treasurehunts, function(j, treasurehunts) {
-                treasurehuntViewOutput += "<div data-role=" + "page" + " id=" + treasurehunts.treasurehuntID + " class='treasurehunt " + treasurehunts.treasurehuntID + "'>"
-                + "<div data-role='header' data-position='fixed'>";
-                treasurehuntViewOutput += "<h1>Aarrejahti</h1>";
-                treasurehuntViewOutput += "</div>";
+                console.log(parseInt(treasurehunts.treasurehuntStatus));
+                if ( parseInt(treasurehunts.treasurehuntStatus) == 0) {
+                    treasurehuntViewOutput += "<div data-role=" + "page" + " id=" + treasurehunts.treasurehuntID + " class='treasurehunt " + treasurehunts.treasurehuntID + "'>"
+                    + "<div data-role='header' data-position='fixed'>";
+                    treasurehuntViewOutput += "<h1>Aarrejahti</h1>";
+                    treasurehuntViewOutput += "</div>";
 
-                treasurehuntViewOutput += "<div data-role='content' class='content'>";
-                treasurehuntViewOutput += "<p id='"+treasurehunts.treasurehuntID+"geolocation' class='geolocation'>Etsitään sijaintia...</p>";
-                treasurehuntViewOutput += "<div class='hint-image centerme'>";
-                treasurehuntViewOutput += "<img src='" + treasurehunts.treasurehuntStep1 + "'></div>";
+                    treasurehuntViewOutput += "<div data-role='content' class='content'>";
+                    treasurehuntViewOutput += "<p id='"+treasurehunts.treasurehuntID+"geolocation' class='geolocation'>Etsitään sijaintia...</p>";
+                    treasurehuntViewOutput += "<div class='hint-image centerme'>";
+                    treasurehuntViewOutput += "<img src='" + treasurehunts.treasurehuntStep1 + "'></div>";
 
-                treasurehuntViewOutput += "<div class='ui-grid-a'>";
-                treasurehuntViewOutput += "<div class='ui-block-a'><span class='highlight'>Latitude:</span></div>";
-                treasurehuntViewOutput += "<div class='ui-block-b'><span id='"+treasurehunts.treasurehuntID+"latval'>?</span></div></div>";
+                    treasurehuntViewOutput += "<div class='ui-grid-a'>";
+                    treasurehuntViewOutput += "<div class='ui-block-a'><span class='highlight'>Latitude:</span></div>";
+                    treasurehuntViewOutput += "<div class='ui-block-b'><span id='"+treasurehunts.treasurehuntID+"latval'>?</span></div></div>";
 
-                treasurehuntViewOutput += "<div class='ui-grid-a'>";
-                treasurehuntViewOutput += "<div class='ui-block-a'><span class='highlight'>Longitude:</span></div>";
-                treasurehuntViewOutput += "<div class='ui-block-b'><span id='"+treasurehunts.treasurehuntID+"lonval'>?</span></div></div>"
+                    treasurehuntViewOutput += "<div class='ui-grid-a'>";
+                    treasurehuntViewOutput += "<div class='ui-block-a'><span class='highlight'>Longitude:</span></div>";
+                    treasurehuntViewOutput += "<div class='ui-block-b'><span id='"+treasurehunts.treasurehuntID+"lonval'>?</span></div></div>"
 
-                treasurehuntViewOutput += "<br><br><p id='"+treasurehunts.treasurehuntID+"checkedLocation' class='checkedLocation'></p>";
-                treasurehuntViewOutput += "<a href='#"+treasurehunts.treasurehuntID+"step2' data-role='button' id='tonextstep' class='tonextstep'>Seuraava vaihe!</a>";
-                treasurehuntViewOutput += "<button id='relocate' class='relocate'>Tarkista sijainti</button></div>";
+                    treasurehuntViewOutput += "<br><br><p id='"+treasurehunts.treasurehuntID+"checkedLocation' class='checkedLocation'></p>";
+                    treasurehuntViewOutput += "<a href='#"+treasurehunts.treasurehuntID+"step2' data-role='button' id='tonextstep' class='tonextstep'>Seuraava vaihe!</a>";
+                    treasurehuntViewOutput += "<button id='relocate' class='relocate'>Tarkista sijainti</button></div>";
 
-                // Hidden inputs for treasurehunt spesific parameters such as longitude and latitude of the treasure and current hunts id
-                treasurehuntViewOutput += "<input type='hidden' name='huntID' id='huntID' value='" + treasurehunts.treasurehuntID + "'>";
-                treasurehuntViewOutput += "<input type='hidden' name='latitude' id='"+ treasurehunts.treasurehuntID + "lat' value='" + treasurehunts.treasurehuntLat + "'>";
-                treasurehuntViewOutput += "<input type='hidden' name='longitude' id='"+ treasurehunts.treasurehuntID + "lon' value='" + treasurehunts.treasurehuntLon + "'>";
-                /*
-                treasurehuntViewOutput += "treasureLat = " + treasurehunts.treasurehuntLat + ";";
-                treasurehuntViewOutput += "treasureLon = " + treasurehunts.treasurehuntLon + ";";
-                treasurehuntViewOutput += "var watchID = null;";
-                treasurehuntViewOutput += "var treasureDistance = 999;";
-                treasurehuntViewOutput += "document.addEventListener('deviceready', onDeviceReady, false);";
-                treasurehuntViewOutput += "function onDeviceReady() {";
-                treasurehuntViewOutput += "$( document ).delegate('#" + treasurehunts.treasurehuntID + "', 'pageinit', function() {";
-                treasurehuntViewOutput += "findLocation();});}";
-                treasurehuntViewOutput += humppasusi;
-                */
+                    // Hidden inputs for treasurehunt spesific parameters such as longitude and latitude of the treasure and current hunts id
+                    treasurehuntViewOutput += "<input type='hidden' name='huntID' id='huntID' value='" + treasurehunts.treasurehuntID + "'>";
+                    treasurehuntViewOutput += "<input type='hidden' name='huntCode' id='"+ treasurehunts.treasurehuntID + "code' value='" + treasurehunts.treasurehuntCode + "'>";
+                    treasurehuntViewOutput += "<input type='hidden' name='latitude' id='"+ treasurehunts.treasurehuntID + "lat' value='" + treasurehunts.treasurehuntLat + "'>";
+                    treasurehuntViewOutput += "<input type='hidden' name='longitude' id='"+ treasurehunts.treasurehuntID + "lon' value='" + treasurehunts.treasurehuntLon + "'>";
+                    /*
+                    treasurehuntViewOutput += "treasureLat = " + treasurehunts.treasurehuntLat + ";";
+                    treasurehuntViewOutput += "treasureLon = " + treasurehunts.treasurehuntLon + ";";
+                    treasurehuntViewOutput += "var watchID = null;";
+                    treasurehuntViewOutput += "var treasureDistance = 999;";
+                    treasurehuntViewOutput += "document.addEventListener('deviceready', onDeviceReady, false);";
+                    treasurehuntViewOutput += "function onDeviceReady() {";
+                    treasurehuntViewOutput += "$( document ).delegate('#" + treasurehunts.treasurehuntID + "', 'pageinit', function() {";
+                    treasurehuntViewOutput += "findLocation();});}";
+                    treasurehuntViewOutput += humppasusi;
+                    */
 
 
-                treasurehuntViewOutput += "<div data-role='footer' data-position='fixed'>"+
-                            "<div class='ui-grid-a'>"+
-                                "<div class='ui-block-a'>"+
-                                    "<a href='#home' data-role='button' data-icon='home' data-iconpos='notext' data-theme='a' data-inline='true'>Home</a>"+
-                                "</div>"+
-                                "<div class='ui-block-b'>"+
-                                    "<a href='#' data-role='button' data-rel='back' data-icon='back' data-iconpos='notext' data-theme='a' data-inline='true'>Back</a>"+
-                                "</div></div></div></div></div>";
+                    treasurehuntViewOutput += "<div data-role='footer' data-position='fixed'>"+
+                                "<div class='ui-grid-a'>"+
+                                    "<div class='ui-block-a'>"+
+                                        "<a href='#home' data-role='button' data-icon='home' data-iconpos='notext' data-theme='a' data-inline='true'>Home</a>"+
+                                    "</div>"+
+                                    "<div class='ui-block-b'>"+
+                                        "<a href='#' data-role='button' data-rel='back' data-icon='back' data-iconpos='notext' data-theme='a' data-inline='true'>Back</a>"+
+                                    "</div></div></div></div></div>";
+                }
 
             });
 
@@ -390,53 +412,56 @@
     $.getJSON(jsonURL,function(json){
         $.each(json.campaigns,function(i,campaigns){
             $.each(campaigns.treasurehunts, function(j, treasurehunts) {
-                treasurehuntStep2ViewOutput += "<div data-role=" + "page" + " id='" + treasurehunts.treasurehuntID + "step2' class='treasurehunt " + treasurehunts.treasurehuntID + "step2'>"
-                + "<div data-role='header' data-position='fixed'>";
-                treasurehuntStep2ViewOutput += "<h1>Aarrejahti</h1>";
-                treasurehuntStep2ViewOutput += "</div>";
+                if ( parseInt(treasurehunts.treasurehuntStatus) == 0) {
+                    treasurehuntStep2ViewOutput += "<div data-role=" + "page" + " id='" + treasurehunts.treasurehuntID + "step2' class='treasurehunt " + treasurehunts.treasurehuntID + "step2'>"
+                    + "<div data-role='header' data-position='fixed'>";
+                    treasurehuntStep2ViewOutput += "<h1>Aarrejahti</h1>";
+                    treasurehuntStep2ViewOutput += "</div>";
 
-                treasurehuntStep2ViewOutput += "<div data-role='content' class='content'>";
-                treasurehuntStep2ViewOutput += "<p id='"+treasurehunts.treasurehuntID+"step2geolocation' class='geolocation'>Etsitään sijaintia...</p>";
-                treasurehuntStep2ViewOutput += "<div class='hint-image centerme'>";
-                treasurehuntStep2ViewOutput += "<img src='" + treasurehunts.treasurehuntStep2 + "'></div>";
+                    treasurehuntStep2ViewOutput += "<div data-role='content' class='content'>";
+                    treasurehuntStep2ViewOutput += "<p id='"+treasurehunts.treasurehuntID+"step2geolocation' class='geolocation'>Etsitään sijaintia...</p>";
+                    treasurehuntStep2ViewOutput += "<div class='hint-image centerme'>";
+                    treasurehuntStep2ViewOutput += "<img src='" + treasurehunts.treasurehuntStep2 + "'></div>";
 
-                treasurehuntStep2ViewOutput += "<div class='ui-grid-a'>";
-                treasurehuntStep2ViewOutput += "<div class='ui-block-a'><span class='highlight'>Latitude:</span></div>";
-                treasurehuntStep2ViewOutput += "<div class='ui-block-b'><span id='"+treasurehunts.treasurehuntID+"step2latval'>?</span></div></div>";
+                    treasurehuntStep2ViewOutput += "<div class='ui-grid-a'>";
+                    treasurehuntStep2ViewOutput += "<div class='ui-block-a'><span class='highlight'>Latitude:</span></div>";
+                    treasurehuntStep2ViewOutput += "<div class='ui-block-b'><span id='"+treasurehunts.treasurehuntID+"step2latval'>?</span></div></div>";
 
-                treasurehuntStep2ViewOutput += "<div class='ui-grid-a'>";
-                treasurehuntStep2ViewOutput += "<div class='ui-block-a'><span class='highlight'>Longitude:</span></div>";
-                treasurehuntStep2ViewOutput += "<div class='ui-block-b'><span id='"+treasurehunts.treasurehuntID+"step2lonval'>?</span></div></div>"
+                    treasurehuntStep2ViewOutput += "<div class='ui-grid-a'>";
+                    treasurehuntStep2ViewOutput += "<div class='ui-block-a'><span class='highlight'>Longitude:</span></div>";
+                    treasurehuntStep2ViewOutput += "<div class='ui-block-b'><span id='"+treasurehunts.treasurehuntID+"step2lonval'>?</span></div></div>"
 
-                treasurehuntStep2ViewOutput += "<br><br><p id='"+treasurehunts.treasurehuntID+"step2checkedLocation' class='checkedLocation'></p>";
-                treasurehuntStep2ViewOutput += "<a href='#"+treasurehunts.treasurehuntID+"step3' data-role='button' id='tonextstep' class='tonextstep'>Seuraava vaihe!</a>";
-                treasurehuntStep2ViewOutput += "<button id='relocate' class='relocate'>Tarkista sijainti</button></div>";
+                    treasurehuntStep2ViewOutput += "<br><br><p id='"+treasurehunts.treasurehuntID+"step2checkedLocation' class='checkedLocation'></p>";
+                    treasurehuntStep2ViewOutput += "<a href='#"+treasurehunts.treasurehuntID+"step3' data-role='button' id='tolaststep' class='tolaststep'>Seuraava vaihe!</a>";
+                    treasurehuntStep2ViewOutput += "<button id='relocate' class='relocate'>Tarkista sijainti</button></div>";
 
-                // Hidden inputs for treasurehunt spesific parameters such as longitude and latitude
-                treasurehuntViewOutput += "<input type='hidden' name='huntID' id='huntID' value='" + treasurehunts.treasurehuntID + "step2'>";
-                treasurehuntStep2ViewOutput += "<input type='hidden' name='latitude' id='"+ treasurehunts.treasurehuntID + "step2lat' value='" + treasurehunts.treasurehuntLat + "'>";
-                treasurehuntStep2ViewOutput += "<input type='hidden' name='longitude' id='"+ treasurehunts.treasurehuntID + "step2lon' value='" + treasurehunts.treasurehuntLon + "'>";
-                /*
-                treasurehuntStep2ViewOutput += "treasureLat = " + treasurehunts.treasurehuntLat + ";";
-                treasurehuntStep2ViewOutput += "treasureLon = " + treasurehunts.treasurehuntLon + ";";
-                treasurehuntStep2ViewOutput += "var watchID = null;";
-                treasurehuntStep2ViewOutput += "var treasureDistance = 999;";
-                treasurehuntStep2ViewOutput += "document.addEventListener('deviceready', onDeviceReady, false);";
-                treasurehuntStep2ViewOutput += "function onDeviceReady() {";
-                treasurehuntStep2ViewOutput += "$( document ).delegate('#" + treasurehunts.treasurehuntID + "', 'pageinit', function() {";
-                treasurehuntStep2ViewOutput += "findLocation();});}";
-                treasurehuntStep2ViewOutput += humppasusi;
-                */
+                    // Hidden inputs for treasurehunt spesific parameters such as longitude and latitude
+                    treasurehuntStep2ViewOutput += "<input type='hidden' name='huntID' id='huntID' value='" + treasurehunts.treasurehuntID + "step2'>";
+                    treasurehuntStep2ViewOutput += "<input type='hidden' name='huntCode' id='"+ treasurehunts.treasurehuntID + "step2code' value='" + treasurehunts.treasurehuntCode + "'>";
+                    treasurehuntStep2ViewOutput += "<input type='hidden' name='latitude' id='"+ treasurehunts.treasurehuntID + "step2lat' value='" + treasurehunts.treasurehuntLat + "'>";
+                    treasurehuntStep2ViewOutput += "<input type='hidden' name='longitude' id='"+ treasurehunts.treasurehuntID + "step2lon' value='" + treasurehunts.treasurehuntLon + "'>";
+                    /*
+                    treasurehuntStep2ViewOutput += "treasureLat = " + treasurehunts.treasurehuntLat + ";";
+                    treasurehuntStep2ViewOutput += "treasureLon = " + treasurehunts.treasurehuntLon + ";";
+                    treasurehuntStep2ViewOutput += "var watchID = null;";
+                    treasurehuntStep2ViewOutput += "var treasureDistance = 999;";
+                    treasurehuntStep2ViewOutput += "document.addEventListener('deviceready', onDeviceReady, false);";
+                    treasurehuntStep2ViewOutput += "function onDeviceReady() {";
+                    treasurehuntStep2ViewOutput += "$( document ).delegate('#" + treasurehunts.treasurehuntID + "', 'pageinit', function() {";
+                    treasurehuntStep2ViewOutput += "findLocation();});}";
+                    treasurehuntStep2ViewOutput += humppasusi;
+                    */
 
 
-                treasurehuntStep2ViewOutput += "<div data-role='footer' data-position='fixed'>"+
-                            "<div class='ui-grid-a'>"+
-                                "<div class='ui-block-a'>"+
-                                    "<a href='#home' data-role='button' data-icon='home' data-iconpos='notext' data-theme='a' data-inline='true'>Home</a>"+
-                                "</div>"+
-                                "<div class='ui-block-b'>"+
-                                    "<a href='#' data-role='button' data-rel='back' data-icon='back' data-iconpos='notext' data-theme='a' data-inline='true'>Back</a>"+
-                                "</div></div></div></div></div>";
+                    treasurehuntStep2ViewOutput += "<div data-role='footer' data-position='fixed'>"+
+                                "<div class='ui-grid-a'>"+
+                                    "<div class='ui-block-a'>"+
+                                        "<a href='#home' data-role='button' data-icon='home' data-iconpos='notext' data-theme='a' data-inline='true'>Home</a>"+
+                                    "</div>"+
+                                    "<div class='ui-block-b'>"+
+                                        "<a href='#' data-role='button' data-rel='back' data-icon='back' data-iconpos='notext' data-theme='a' data-inline='true'>Back</a>"+
+                                    "</div></div></div></div></div>";
+                }
 
             });
 
@@ -460,57 +485,59 @@
     $.getJSON(jsonURL,function(json){
         $.each(json.campaigns,function(i,campaigns){
             $.each(campaigns.treasurehunts, function(j, treasurehunts) {
-                treasurehuntStep3ViewOutput += "<div data-role=" + "page" + " id='" + treasurehunts.treasurehuntID + "step3' class='treasurehunt " + treasurehunts.treasurehuntID + "step2'>"
-                + "<div data-role='header' data-position='fixed'>";
-                treasurehuntStep3ViewOutput += "<h1>Aarrejahti</h1>";
-                treasurehuntStep3ViewOutput += "</div>";
+                if ( parseInt(treasurehunts.treasurehuntStatus) == 0) {
+                    treasurehuntStep3ViewOutput += "<div data-role=" + "page" + " id='" + treasurehunts.treasurehuntID + "step3' class='treasurehunt " + treasurehunts.treasurehuntID + "step2'>"
+                    + "<div data-role='header' data-position='fixed'>";
+                    treasurehuntStep3ViewOutput += "<h1>Aarrejahti</h1>";
+                    treasurehuntStep3ViewOutput += "</div>";
 
-                treasurehuntStep3ViewOutput += "<div data-role='content' class='content'>";
-                treasurehuntStep3ViewOutput += "<h2>Olet aivan aarteen lähellä!</h2>";
-                treasurehuntStep3ViewOutput += "<p>Syötä yhteystietosi ja aarteen koodi alla olevaan lomakkeeseen</p>";
+                    treasurehuntStep3ViewOutput += "<div data-role='content' class='content'>";
+                    treasurehuntStep3ViewOutput += "<h2>Olet aivan aarteen lähellä!</h2>";
+                    treasurehuntStep3ViewOutput += "<p>Syötä yhteystietosi ja aarteen koodi alla olevaan lomakkeeseen</p>";
 
-                treasurehuntStep3ViewOutput += "<form method='post' action='demoform.asp'>";
-                treasurehuntStep3ViewOutput += "<div data-role='fieldcontain'>";
-                treasurehuntStep3ViewOutput += "<label for='name'>Nimi:</label>";
-                treasurehuntStep3ViewOutput += "<input type='text' name='name' id='name'>";
-                treasurehuntStep3ViewOutput += "<label for='address'>Osoite:</label>";
-                treasurehuntStep3ViewOutput += "<input type='text' name='address' id='address'>";
-                treasurehuntStep3ViewOutput += "<label for='zipcode'>Postinumero:</label>";
-                treasurehuntStep3ViewOutput += "<input type='text' name='zipcode' id='zipcode'>";
-                treasurehuntStep3ViewOutput += "<label for='city'>Toimipaikka:</label>";
-                treasurehuntStep3ViewOutput += "<input type='text' name='city' id='city'>";
-                treasurehuntStep3ViewOutput += "<label for='code'>Koodi:</label>";
-                treasurehuntStep3ViewOutput += "<input type='text' name='code' id='code'>";
-                treasurehuntStep3ViewOutput += "</div>";
-                treasurehuntStep3ViewOutput += "<input type='submit' data-inline='true' data-role='button' data-theme='a' value='Lähetä'>";
-                treasurehuntStep3ViewOutput += "</form>";
+                    treasurehuntStep3ViewOutput += "<form id='" + treasurehunts.treasurehuntID + "form'>";
+                    treasurehuntStep3ViewOutput += "<div data-role='fieldcontain'>";
+                    treasurehuntStep3ViewOutput += "<label for='name'>Nimi:</label>";
+                    treasurehuntStep3ViewOutput += "<input type='text' name='name' id='name'>";
+                    treasurehuntStep3ViewOutput += "<label for='address'>Osoite:</label>";
+                    treasurehuntStep3ViewOutput += "<input type='text' name='address' id='address'>";
+                    treasurehuntStep3ViewOutput += "<label for='zipcode'>Postinumero:</label>";
+                    treasurehuntStep3ViewOutput += "<input type='text' name='zipcode' id='zipcode'>";
+                    treasurehuntStep3ViewOutput += "<label for='city'>Toimipaikka:</label>";
+                    treasurehuntStep3ViewOutput += "<input type='text' name='city' id='city'>";
+                    treasurehuntStep3ViewOutput += "<label for='code'>Koodi:</label>";
+                    treasurehuntStep3ViewOutput += "<input type='text' name='code' id='code'>";
+                    treasurehuntStep3ViewOutput += "</div>";
+                    treasurehuntStep3ViewOutput += "<input type='submit' id='" + treasurehunts.treasurehuntID + "submit' data-inline='true' data-role='button' data-theme='a' value='Lähetä'>";
+                    treasurehuntStep3ViewOutput += "</form>";
 
-                // Hidden inputs for treasurehunt spesific parameters such as longitude and latitude
-                treasurehuntStep3ViewOutput += "<input type='hidden' name='huntID' id='huntID' value='" + treasurehunts.treasurehuntID + "step3'>";
-                treasurehuntStep3ViewOutput += "<input type='hidden' name='huntCode' id='"+ treasurehunts.treasurehuntID + "code' value='" + treasurehunts.treasurehuntCode + "'>";
-                treasurehuntStep3ViewOutput += "<input type='hidden' name='latitude' id='"+ treasurehunts.treasurehuntID + "step3lat' value='" + treasurehunts.treasurehuntLat + "'>";
-                treasurehuntStep3ViewOutput += "<input type='hidden' name='longitude' id='"+ treasurehunts.treasurehuntID + "step3lon' value='" + treasurehunts.treasurehuntLon + "'>";
-                /*
-                treasurehuntStep3ViewOutput += "treasureLat = " + treasurehunts.treasurehuntLat + ";";
-                treasurehuntStep3ViewOutput += "treasureLon = " + treasurehunts.treasurehuntLon + ";";
-                treasurehuntStep3ViewOutput += "var watchID = null;";
-                treasurehuntStep3ViewOutput += "var treasureDistance = 999;";
-                treasurehuntStep3ViewOutput += "document.addEventListener('deviceready', onDeviceReady, false);";
-                treasurehuntStep3ViewOutput += "function onDeviceReady() {";
-                treasurehuntStep3ViewOutput += "$( document ).delegate('#" + treasurehunts.treasurehuntID + "', 'pageinit', function() {";
-                treasurehuntStep3ViewOutput += "findLocation();});}";
-                treasurehuntStep3ViewOutput += humppasusi;
-                */
+                    // Hidden inputs for treasurehunt spesific parameters such as longitude and latitude
+                    treasurehuntStep3ViewOutput += "<input type='hidden' name='huntID' id='huntID' value='" + treasurehunts.treasurehuntID + "step3'>";
+                    treasurehuntStep3ViewOutput += "<input type='hidden' name='huntCode' id='"+ treasurehunts.treasurehuntID + "step3code' value='" + treasurehunts.treasurehuntCode + "'>";
+                    treasurehuntStep3ViewOutput += "<input type='hidden' name='latitude' id='"+ treasurehunts.treasurehuntID + "step3lat' value='" + treasurehunts.treasurehuntLat + "'>";
+                    treasurehuntStep3ViewOutput += "<input type='hidden' name='longitude' id='"+ treasurehunts.treasurehuntID + "step3lon' value='" + treasurehunts.treasurehuntLon + "'>";
+                    /*
+                    treasurehuntStep3ViewOutput += "treasureLat = " + treasurehunts.treasurehuntLat + ";";
+                    treasurehuntStep3ViewOutput += "treasureLon = " + treasurehunts.treasurehuntLon + ";";
+                    treasurehuntStep3ViewOutput += "var watchID = null;";
+                    treasurehuntStep3ViewOutput += "var treasureDistance = 999;";
+                    treasurehuntStep3ViewOutput += "document.addEventListener('deviceready', onDeviceReady, false);";
+                    treasurehuntStep3ViewOutput += "function onDeviceReady() {";
+                    treasurehuntStep3ViewOutput += "$( document ).delegate('#" + treasurehunts.treasurehuntID + "', 'pageinit', function() {";
+                    treasurehuntStep3ViewOutput += "findLocation();});}";
+                    treasurehuntStep3ViewOutput += humppasusi;
+                    */
 
 
-                treasurehuntStep3ViewOutput += "<div data-role='footer' data-position='fixed'>"+
-                            "<div class='ui-grid-a'>"+
-                                "<div class='ui-block-a'>"+
-                                    "<a href='#home' data-role='button' data-icon='home' data-iconpos='notext' data-theme='a' data-inline='true'>Home</a>"+
-                                "</div>"+
-                                "<div class='ui-block-b'>"+
-                                    "<a href='#' data-role='button' data-rel='back' data-icon='back' data-iconpos='notext' data-theme='a' data-inline='true'>Back</a>"+
-                                "</div></div></div></div></div>";
+                    treasurehuntStep3ViewOutput += "<div data-role='footer' data-position='fixed'>"+
+                                "<div class='ui-grid-a'>"+
+                                    "<div class='ui-block-a'>"+
+                                        "<a href='#home' data-role='button' data-icon='home' data-iconpos='notext' data-theme='a' data-inline='true'>Home</a>"+
+                                    "</div>"+
+                                    "<div class='ui-block-b'>"+
+                                        "<a href='#' data-role='button' data-rel='back' data-icon='back' data-iconpos='notext' data-theme='a' data-inline='true'>Back</a>"+
+                                    "</div></div></div></div></div>";
+                }
 
             });
 

@@ -3,14 +3,15 @@
       {
          "campaignID":"campaign01",
          "campaignName":"Kampanja1",
-         "campaignDescription":"Tässä lukee kampanjan kuvaus.",
+         "campaignDescription":"TÃ¤ssÃ¤ lukee kampanjan kuvaus.",
          "treasurehunts":[
             {
                "treasurehuntID":"campaign01treasurehunt01",
                "treasurehuntName":"Veturitallinkatu 5",
-               "treasurehuntLat":"62.24407959759403",
-               "treasurehuntLon":"25.757184608451173",
-               "status":"Avoinna",
+               "treasurehuntLat":"62.2422889",
+               "treasurehuntLon":"25.7598207",
+               "treasurehuntStatus":"0",
+               "treasurehuntCode":"RPIHA123",
                "treasurehuntStep1":"http://satutyrvainen.com/treasurehunt/images/vihje1.jpg",
                "treasurehuntStep2":"http://satutyrvainen.com/treasurehunt/images/vihje2.jpg"
             },
@@ -19,7 +20,18 @@
                "treasurehuntName":"Puistokatu 1",
                "treasurehuntLat":"62.24428",
                "treasurehuntLon":"25.75022",
-               "status":"Avoinna",
+               "treasurehuntStatus":"0",
+               "treasurehuntCode":"POMMI123",
+               "treasurehuntStep1":"http://satutyrvainen.com/treasurehunt/images/vihje1.jpg",
+               "treasurehuntStep2":"http://satutyrvainen.com/treasurehunt/images/vihje2.jpg"
+            },
+            {
+               "treasurehuntID":"campaign01treasurehunt03",
+               "treasurehuntName":"Vapaudenkatu 66",
+               "treasurehuntLat":"62.24464",
+               "treasurehuntLon":"25.75616",
+               "treasurehuntStatus":"0",
+               "treasurehuntCode":"VETURI123",
                "treasurehuntStep1":"http://satutyrvainen.com/treasurehunt/images/vihje1.jpg",
                "treasurehuntStep2":"http://satutyrvainen.com/treasurehunt/images/vihje2.jpg"
             }
@@ -28,14 +40,15 @@
       {
          "campaignID":"campaign02",
          "campaignName":"Kampanja2",
-         "campaignDescription":"Tässä lukee kampanjan kuvaus.",
+         "campaignDescription":"TÃ¤ssÃ¤ lukee kampanjan kuvaus.",
          "treasurehunts":[
             {
                "treasurehuntID":"campaign02treasurehunt01",
                "treasurehuntName":"Tapionkatu 4",
                "treasurehuntLat":"62.24747",
                "treasurehuntLon":"25.74394",
-               "status":"Avoinna",
+               "treasurehuntStatus":"0",
+               "treasurehuntCode":"TAPSA123",
                "treasurehuntStep1":"http://satutyrvainen.com/treasurehunt/images/vihje1.jpg",
                "treasurehuntStep2":"http://satutyrvainen.com/treasurehunt/images/vihje2.jpg"
             }
