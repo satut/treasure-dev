@@ -41,6 +41,9 @@ img {
 	height: auto;
 	border: 0;
 }
+#tonextstep, #tolaststep {
+	display: none;
+}
 .ui-input-text {
 	margin-bottom: 10px !important;
 }
