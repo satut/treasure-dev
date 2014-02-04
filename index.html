@@ -506,6 +506,7 @@
                     treasurehuntStep3ViewOutput += "</form>";
                     treasurehuntStep3ViewOutput += "<div id='" + treasurehunts.treasurehuntID + "step3formsendmessage'>";
                     treasurehuntStep3ViewOutput += "</div>";
+                    treasurehuntStep3ViewOutput += "</div>";
                     treasurehuntStep3ViewOutput += "<div id='" + treasurehunts.treasurehuntID + "step3hiderWrong' class='hide-me'>";
                     treasurehuntStep3ViewOutput += "<h2>Koodi väärin</h2>";
                     treasurehuntStep3ViewOutput += "<p>Tarkista koodi!</p>";
@@ -692,7 +693,6 @@
             hiddenformRight.css('display', 'block');
         }
         else {
-            console.log("Koodi väärin.");
             hiddenformWrong.css('display', 'block');
             hiddenformRight.css('display', 'none');
         }
