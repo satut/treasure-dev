@@ -39,6 +39,7 @@
             $('.relocate').click(function(){
                 findLocation();
             });
+
         });
 
     }
@@ -65,8 +66,8 @@
         var displon = document.getElementById(currentHuntID+'lonval');
         var nextStepBtn = $('#'+currentHuntID).children('.content').children('#tonextstep');
         var lastStepBtn = $('#'+currentHuntID).children('.content').children('#tolaststep');
-        var treasureCode = ($('input#'+currentHuntID+'code').val()).toLowerCase();
-        console.log("KOODI: " + treasureCode);
+        //var treasureCode = ($('input#'+currentHuntID+'code').val()).toLowerCase();
+        //console.log("KOODI: " + treasureCode);
         var currentTreasureDistance = 999;
 
         // The user's current Lat and Long
@@ -128,25 +129,6 @@
 
         treasureDistance = currentTreasureDistance;
 
-        var form = document.getElementById(currentHuntID+'form');
-        var submit = document.getElementById(currentHuntID+'submit');
-
-        $(form).on("submit",function(e) {
-            //disable the button so we can't resubmit while we wait
-            //$(submit,form).attr("disabled","disabled");
-
-            navigator.geolocation.clearWatch(watchID);
-
-            var code = ($("#code", this).val()).toLowerCase();
-
-            if (code == treasureCode) {
-                console.log("jee!");
-            }
-            else {
-                console.log("eieiei");
-            }
-        });
-
     }
 
 
@@ -170,6 +152,7 @@
 
  </head>
  <body>
+
 <div id="wrapper">
     <!-- ****** ETUSIVU ****** -->
  	<div data-role="page" id="home">
@@ -486,16 +469,26 @@
         $.each(json.campaigns,function(i,campaigns){
             $.each(campaigns.treasurehunts, function(j, treasurehunts) {
                 if ( parseInt(treasurehunts.treasurehuntStatus) == 0) {
-                    treasurehuntStep3ViewOutput += "<div data-role=" + "page" + " id='" + treasurehunts.treasurehuntID + "step3' class='treasurehunt " + treasurehunts.treasurehuntID + "step2'>"
+                    treasurehuntStep3ViewOutput += "<div data-role=" + "page" + " id='" + treasurehunts.treasurehuntID + "step3' class='treasurehunt " + treasurehunts.treasurehuntID + "step3 step3'>"
                     + "<div data-role='header' data-position='fixed'>";
                     treasurehuntStep3ViewOutput += "<h1>Aarrejahti</h1>";
                     treasurehuntStep3ViewOutput += "</div>";
 
                     treasurehuntStep3ViewOutput += "<div data-role='content' class='content'>";
                     treasurehuntStep3ViewOutput += "<h2>Olet aivan aarteen lähellä!</h2>";
-                    treasurehuntStep3ViewOutput += "<p>Syötä yhteystietosi ja aarteen koodi alla olevaan lomakkeeseen</p>";
+                    treasurehuntStep3ViewOutput += "<p>Kun löydät aarteen syötä aarteen koodi tähän:</p>";
 
-                    treasurehuntStep3ViewOutput += "<form id='" + treasurehunts.treasurehuntID + "form'>";
+                    treasurehuntStep3ViewOutput += "<form id='" + treasurehunts.treasurehuntID + "step3codeform' data-ajax='false' method='get' action=''>";
+                    //treasurehuntStep3ViewOutput += "<label for='code'>Koodi:</label>";
+                    treasurehuntStep3ViewOutput += "<input type='text' name='code' id='code'>";
+                    treasurehuntStep3ViewOutput += "<input type='hidden' name='huntCode' id='"+ treasurehunts.treasurehuntID + "step3code' value='" + treasurehunts.treasurehuntCode + "'>";
+                    treasurehuntStep3ViewOutput += "<input type='submit' id='" + treasurehunts.treasurehuntID + "step3codesubmit' data-inline='true' data-role='button' data-theme='a' value='Tarkista koodi'>";
+                    treasurehuntStep3ViewOutput += "</form>";
+
+                    treasurehuntStep3ViewOutput += "<div id='" + treasurehunts.treasurehuntID + "step3hiderRight' class='hide-me'>";
+                    treasurehuntStep3ViewOutput += "<h2>Koodi oikein!</h2>";
+                    treasurehuntStep3ViewOutput += "<p>Kerro vielä nimesi ja osoitteesi, jotta voimme lähettää palkinnon sinulle. Saat sähköpostiisi vahvistusviestin, kun palkinto on lähetetty!</p>";
+                    treasurehuntStep3ViewOutput += "<form id='" + treasurehunts.treasurehuntID + "step3form'>";
                     treasurehuntStep3ViewOutput += "<div data-role='fieldcontain'>";
                     treasurehuntStep3ViewOutput += "<label for='name'>Nimi:</label>";
                     treasurehuntStep3ViewOutput += "<input type='text' name='name' id='name'>";
@@ -505,15 +498,23 @@
                     treasurehuntStep3ViewOutput += "<input type='text' name='zipcode' id='zipcode'>";
                     treasurehuntStep3ViewOutput += "<label for='city'>Toimipaikka:</label>";
                     treasurehuntStep3ViewOutput += "<input type='text' name='city' id='city'>";
-                    treasurehuntStep3ViewOutput += "<label for='code'>Koodi:</label>";
-                    treasurehuntStep3ViewOutput += "<input type='text' name='code' id='code'>";
+                    treasurehuntStep3ViewOutput += "<label for='email'>Sähköposti:</label>";
+                    treasurehuntStep3ViewOutput += "<input type='email' name='email' id='email'>";
+                    treasurehuntStep3ViewOutput += "<input type='hidden' name='huntname' id='huntname' value='" + treasurehunts.treasurehuntName + "'>";
                     treasurehuntStep3ViewOutput += "</div>";
-                    treasurehuntStep3ViewOutput += "<input type='submit' id='" + treasurehunts.treasurehuntID + "submit' data-inline='true' data-role='button' data-theme='a' value='Lähetä'>";
+                    treasurehuntStep3ViewOutput += "<input type='submit' id='" + treasurehunts.treasurehuntID + "step3submit' data-inline='true' data-role='button' data-theme='a' value='Lähetä'>";
                     treasurehuntStep3ViewOutput += "</form>";
+                    treasurehuntStep3ViewOutput += "<div id='" + treasurehunts.treasurehuntID + "step3formsendmessage'>";
+                    treasurehuntStep3ViewOutput += "</div>";
+                    treasurehuntStep3ViewOutput += "<div id='" + treasurehunts.treasurehuntID + "step3hiderWrong' class='hide-me'>";
+                    treasurehuntStep3ViewOutput += "<h2>Koodi väärin</h2>";
+                    treasurehuntStep3ViewOutput += "<p>Tarkista koodi!</p>";
+                    treasurehuntStep3ViewOutput += "</div>";
+                    treasurehuntStep3ViewOutput += "</div>";
 
                     // Hidden inputs for treasurehunt spesific parameters such as longitude and latitude
                     treasurehuntStep3ViewOutput += "<input type='hidden' name='huntID' id='huntID' value='" + treasurehunts.treasurehuntID + "step3'>";
-                    treasurehuntStep3ViewOutput += "<input type='hidden' name='huntCode' id='"+ treasurehunts.treasurehuntID + "step3code' value='" + treasurehunts.treasurehuntCode + "'>";
+                    //treasurehuntStep3ViewOutput += "<input type='hidden' name='huntCode' id='"+ treasurehunts.treasurehuntID + "step3code' value='" + treasurehunts.treasurehuntCode + "'>";
                     treasurehuntStep3ViewOutput += "<input type='hidden' name='latitude' id='"+ treasurehunts.treasurehuntID + "step3lat' value='" + treasurehunts.treasurehuntLat + "'>";
                     treasurehuntStep3ViewOutput += "<input type='hidden' name='longitude' id='"+ treasurehunts.treasurehuntID + "step3lon' value='" + treasurehunts.treasurehuntLon + "'>";
                     /*
@@ -664,36 +665,108 @@
 
 
  <script type="text/javascript">
-    /*
-    // 62.2427925
- 	var treasureLat = 62.2427795;
-    // 25.7591883
- 	var treasureLon = 25.7592863;
 
-    var checkBtn = document.getElementById('checkLocation');
-	checkBtn.onclick = function(){
-		var userLat = parseFloat(document.getElementById('latval').innerHTML);
-		var userLon = parseFloat(document.getElementById('lonval').innerHTML);
-		console.log(userLat);
-		console.log(userLon);
-		if ( ( (treasureLat - userLat <= 0.0009 ) && (treasureLat - userLat >= -0.0000) ) &&
-			( (treasureLon - userLon <= 0.0009 ) && (treasureLon - userLon >= -0.0009) ) ) {
-			document.getElementById('checkedLocation').innerHTML = 'Olet aivan aarteen lähellä!';
-		}
-        else if ( ( (treasureLat - userLat <= 0.002 ) && (treasureLat - userLat >= -0.002) ) &&
-            ( (treasureLon - userLon <= 0.002 ) && (treasureLon - userLon >= -0.002) ) ) {
-            document.getElementById('checkedLocation').innerHTML = 'Alkaa jo polttaa.';
-        }
-        else if ( ( (treasureLat - userLat <= 0.005 ) && (treasureLat - userLat >= -0.005) ) &&
-            ( (treasureLon - userLon <= 0.005 ) && (treasureLon - userLon >= -0.005) ) ) {
-            document.getElementById('checkedLocation').innerHTML = 'Lämpenee...';
-        }
-		else {
-			document.getElementById('checkedLocation').innerHTML = 'Etsiskelehän vielä.';
-		}
-	}
 
+
+ $( document ).delegate(".treasurehunt.step3", "pageinit", function() {
+
+    // * CODE VALIDATION FORM for checking if the user types in the right code *
+    var currentHuntIDf = $.mobile.activePage.attr("id");
+    // Because active page returns step2-view we have to change step2 from the id to step3
+    currentHuntIDf = currentHuntIDf.replace('2', '3');
+    var codeform = document.getElementById(currentHuntIDf+'codeform');
+    var hiddenformRight = $(document.getElementById(currentHuntIDf+'hiderRight'));
+    var hiddenformWrong = $(document.getElementById(currentHuntIDf+'hiderWrong'));
+    navigator.geolocation.clearWatch(watchID);
+
+    $(codeform).submit(function(e) { 
+        e.preventDefault();
+
+        var usercode = ($('#code').val()).toLowerCase();
+        var realcode = ($('#campaign01treasurehunt01step3code').val()).toLowerCase();
+
+        console.log("Usercode: " + usercode + " treasurecode: " + realcode);
+
+        if ( usercode == realcode ) {
+            hiddenformWrong.css('display', 'none');
+            hiddenformRight.css('display', 'block');
+        }
+        else {
+            console.log("Koodi väärin.");
+            hiddenformWrong.css('display', 'block');
+            hiddenformRight.css('display', 'none');
+        }
+
+    });
+
+
+    // * CONTACT INFO SENDING FORM for sending in the contact info of the winner *
+    var form = document.getElementById(currentHuntIDf+'form');
+    var sendmessage = document.getElementById(currentHuntIDf+'formsendmessage');
+
+        $(form).submit(function(e) { 
+            sendmessage.innerHTML = "Lähetetään tietoja, odota hetki...";
+            e.preventDefault();
+
+            var formData = $(form).serialize();
+
+                $.ajax({
+                    type: "POST",
+                    url: "http://satutyrvainen.com/treasurehunt/form.php",
+                    cache: false,
+                    data: formData,
+                    success: onSubmitSuccess,
+                    error: onSubmitError
+                });
+  
+            return false;
+
+        });
+
+        function onSubmitSuccess(data) {
+            sendmessage.innerHTML = "Tiedot lähetetty onnistuneesti! Saat ilmoittamaasi sähköpostiosoitteeseen vahvistusviestin, kun palkintosi on lähetetty!";
+        }
+
+        function onSubmitError(data) {
+            sendmessage.innerHTML = "Tietoja lähetettäessä tapahtui virhe. Kokeile lähetystä uudelleen.";
+        }
+
+
+ });
+
+
+/*
+
+    $(form).submit(function(e) { 
+        // Stops the form from actually posting
+        e.preventDefault();
+        var hei = $('#'+currentHuntIDf+'code').val();
+        console.log("hei " + hei );
+        //var code = ($("#code", this).val()).toLowerCase();
+
+        // Send the request
+        $.post('http://satutyrvainen.com/treasurehunt/form.php', {
+            name: $('#name').val(),
+            address: $('#address').val(),
+            zipcode: $('#zipcode').val(),
+            city: $('#city').val(),
+            code: $('#code').val(),
+            huntname: $('#huntname').val(),
+            treasurecode: $('#'+currentHuntIDf+'code').val()
+            }, function(d){
+                console.log(d);
+                // Here we handle the response from the script
+                // We are just going to alert the result for now
+                //alert(d);
+            });
+
+            console.log("HUNTID: " + currentHuntIDf);
+            navigator.geolocation.clearWatch(watchID);
+
+    });
+    console.log("HUNTID: " + currentHuntIDf);
     */
+
 </script>
 
 </div>
